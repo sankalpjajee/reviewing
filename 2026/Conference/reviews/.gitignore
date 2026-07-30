@@ -1,0 +1,16 @@
+# Extracted manuscript text is NOT committed.
+#
+# Submissions under review are confidential; the EditSleuth PDF, for example,
+# carries "Confidential reviewer copy ... Unauthorized sharing, redistribution, or
+# disclosure is strictly prohibited" on every page. paper.txt and paper_clean.txt
+# are the complete manuscript, so committing them to a repository that may be
+# pushed or shared is redistribution.
+#
+# Quoting passages inside a review is normal reviewing practice and stays. Carrying
+# the whole manuscript in version control does not. Regenerate locally with:
+#     ./workflow/scripts/run_review.sh <submission>.pdf <slug>
+*/artifacts/paper.txt
+*/artifacts/paper_clean.txt
+
+# Source PDFs, likewise.
+*.pdf

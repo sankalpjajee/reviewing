@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Verified review findings",
+  "description": "Findings that have passed adversarial verification (PIPELINE.md Stage 5), plus recorded strengths. REFUTED findings are dropped and must not appear here.",
+  "type": "object",
+  "required": ["submission", "findings", "strengths"],
+  "additionalProperties": false,
+  "properties": {
+    "submission": {
+      "type": "object",
+      "required": ["title", "venue"],
+      "additionalProperties": true,
+      "properties": {
+        "title": { "type": "string" },
+        "venue": { "type": "string" },
+        "slug": { "type": "string" },
+        "reviewed_on": { "type": "string" }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "dimension", "severity", "kind", "location", "evidence", "claim", "why_it_matters", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "description": "stable kebab-case slug" },
+          "title": { "type": "string" },
+          "dimension": {
+            "type": "string",
+            "enum": ["claims", "stats", "method", "related", "repro", "integrity"]
+          },
+          "severity": { "type": "string", "enum": ["critical", "major", "minor"] },
+          "kind": {
+            "type": "string",
+            "enum": ["wrong", "under-specified", "debatable"],
+            "description": "See rubrics/severity-scale.md. Distinct from severity and reported separately."
+          },
+          "location": { "type": "string", "description": "section / table / figure / page / appendix" },
+          "evidence": { "type": "string", "description": "verbatim quote or transcribed numbers" },
+          "claim": { "type": "string", "description": "the defect in one or two sentences" },
+          "why_it_matters": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["CONFIRMED", "WEAKENED"],
+            "description": "Stage 5 verdict. WEAKENED means `claim` has already been rewritten to the version that survives rebuttal."
+          },
+          "verifier_note": { "type": "string", "description": "what the refutation attempt found" },
+          "rebuttal_fixable": {
+            "type": "boolean",
+            "description": "Could an author answer this in a rebuttal without new experiments? Drives Stage 6 ranking."
+          },
+          "machine_check": {
+            "type": "string",
+            "description": "id of the corresponding check in artifacts/checks.json, when one exists"
+          }
+        }
+      }
+    },
+    "strengths": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "location", "why"],
+        "additionalProperties": false,
+        "properties": {
+          "title": { "type": "string" },
+          "location": { "type": "string" },
+          "why": { "type": "string" },
+          "dimension": { "type": "string" }
+        }
+      }
+    }
+  }
+}
