@@ -1,0 +1,314 @@
+{
+  "paper": "EditSleuth: A Dataset of Grounded Reasoning Chains for Image-Edit Forensics",
+  "venue": "NeurIPS 2026 Datasets & Benchmarks (Evaluations and Datasets) Track",
+  "note": "Numbers transcribed verbatim from the submission. Tolerances are generous enough to absorb the paper's own rounding, so a FAIL is a real disagreement rather than a display artefact.",
+  "checks": [
+    {
+      "id": "tbl1-pico-total",
+      "kind": "sum",
+      "location": "Table 1, p6",
+      "claim": "Per-category Pico-Banana counts total 257,725",
+      "parts": [
+        14187,
+        15109,
+        14547,
+        24600,
+        42871,
+        30188,
+        52691,
+        0,
+        10688,
+        32742,
+        20102,
+        0
+      ],
+      "total": 257725,
+      "tolerance": 0
+    },
+    {
+      "id": "tbl1-mb-total",
+      "kind": "sum",
+      "location": "Table 1, p6",
+      "claim": "Per-category MagicBrush dev counts total 528",
+      "parts": [
+        151,
+        42,
+        26,
+        49,
+        0,
+        0,
+        7,
+        11,
+        5,
+        2,
+        0,
+        235
+      ],
+      "total": 528,
+      "tolerance": 0
+    },
+    {
+      "id": "tbl1-pct-scene",
+      "kind": "percent",
+      "location": "Table 1, p6",
+      "claim": "scene_transformation is 20.4% of Pico-Banana",
+      "value": 52691,
+      "total": 257725,
+      "stated": 20.4
+    },
+    {
+      "id": "tbl1-pct-textedit",
+      "kind": "percent",
+      "location": "Sec 4.1 / Table 1",
+      "claim": "smallest non-zero category, text_edit, at 4.1%",
+      "value": 10688,
+      "total": 257725,
+      "stated": 4.1
+    },
+    {
+      "id": "sec41-no-category-above-21pct",
+      "kind": "compare",
+      "location": "Sec 4.1, p5",
+      "claim": "no category above 21%",
+      "name": "max category share (scene_transformation)",
+      "op": "<",
+      "left": 20.4,
+      "right": 21.0
+    },
+    {
+      "id": "sec43-tertile-total",
+      "kind": "sum",
+      "location": "Sec 4.3, p6",
+      "claim": "tertile binning produces 85,909 easy, 85,908 medium, 85,908 hard",
+      "parts": [
+        85909,
+        85908,
+        85908
+      ],
+      "total": 257725,
+      "tolerance": 0
+    },
+    {
+      "id": "sec51-sigma-pico",
+      "kind": "pct_change",
+      "location": "Sec 5.1 / Fig 2 caption, p7",
+      "claim": "V2 increases score standard deviation by +55% on Pico-Banana (0.070 -> 0.109)",
+      "old": 0.07,
+      "new": 0.109,
+      "stated": 55.0,
+      "tolerance": 1.0
+    },
+    {
+      "id": "sec51-sigma-magicbrush",
+      "kind": "pct_change",
+      "location": "Sec 5.1, p7",
+      "claim": "V2 increases score standard deviation by +94% on MagicBrush (0.034 -> 0.066)",
+      "old": 0.034,
+      "new": 0.066,
+      "stated": 94.0,
+      "tolerance": 1.0
+    },
+    {
+      "id": "sec52-tau-offset-a",
+      "kind": "delta",
+      "location": "Sec 5.2 / Table 2, p7",
+      "claim": "+0.04 in tau from LAB+SSIM to LAB+LPIPS",
+      "old": 0.52,
+      "new": 0.56,
+      "stated": 0.04,
+      "tolerance": 0.005
+    },
+    {
+      "id": "sec52-cdm-offset-a",
+      "kind": "delta",
+      "location": "Sec 5.2 / Table 2, p7",
+      "claim": "versus +0.036 in cdm.mean",
+      "old": 0.429,
+      "new": 0.465,
+      "stated": 0.036,
+      "tolerance": 0.005
+    },
+    {
+      "id": "sec52-tau-offset-b",
+      "kind": "delta",
+      "location": "Sec 5.2 / Table 2, p7",
+      "claim": "+0.06 in tau from LAB+LPIPS to LAB+LPIPS+SSIM",
+      "old": 0.56,
+      "new": 0.62,
+      "stated": 0.06,
+      "tolerance": 0.005
+    },
+    {
+      "id": "sec52-cdm-offset-b",
+      "kind": "delta",
+      "location": "Sec 5.2 / Table 2, p7",
+      "claim": "versus +0.065 in cdm.mean",
+      "old": 0.465,
+      "new": 0.53,
+      "stated": 0.065,
+      "tolerance": 0.005
+    },
+    {
+      "id": "tbl3-cond-chain-category",
+      "kind": "ratio",
+      "location": "Sec 5.4 Results / Table 3, p8",
+      "claim": "conditional on extraction, chain-target gets 33.4% on category",
+      "numerator": 22.5,
+      "denominator": 67.4,
+      "scale": 100,
+      "stated": 33.4,
+      "tolerance": 0.1
+    },
+    {
+      "id": "tbl3-cond-chain-spatial",
+      "kind": "ratio",
+      "location": "Sec 5.4 Results / Table 3, p8",
+      "claim": "conditional on extraction, chain-target gets 37.2% on spatial",
+      "numerator": 29.7,
+      "denominator": 79.9,
+      "scale": 100,
+      "stated": 37.2,
+      "tolerance": 0.1
+    },
+    {
+      "id": "tbl3-cond-chain-bin",
+      "kind": "ratio",
+      "location": "Sec 5.4 Results / Table 3, p8",
+      "claim": "conditional on extraction, chain-target gets 40.8% on difficulty bin",
+      "numerator": 28.0,
+      "denominator": 68.6,
+      "scale": 100,
+      "stated": 40.8,
+      "tolerance": 0.1
+    },
+    {
+      "id": "tbl3-cond-label-category",
+      "kind": "ratio",
+      "location": "Sec 5.4 Results / Table 3, p8",
+      "claim": "label-only conditional accuracy on category is 39.7%",
+      "numerator": 37.1,
+      "denominator": 93.6,
+      "scale": 100,
+      "stated": 39.7,
+      "tolerance": 0.1
+    },
+    {
+      "id": "tbl3-cond-label-spatial",
+      "kind": "ratio",
+      "location": "Sec 5.4 Results / Table 3, p8",
+      "claim": "label-only conditional accuracy on spatial is 42.2%",
+      "numerator": 42.2,
+      "denominator": 100.0,
+      "scale": 100,
+      "stated": 42.2,
+      "tolerance": 0.1
+    },
+    {
+      "id": "tbl3-cond-label-bin",
+      "kind": "ratio",
+      "location": "Sec 5.4 Results / Table 3, p8",
+      "claim": "label-only conditional accuracy on difficulty bin is 33.1%",
+      "numerator": 33.1,
+      "denominator": 100.0,
+      "scale": 100,
+      "stated": 33.1,
+      "tolerance": 0.1
+    },
+    {
+      "id": "sec54-two-of-three-claim",
+      "kind": "count_true",
+      "location": "Sec 5.4 Results, p8",
+      "claim": "'chain-target matches or exceeds label-only on two of three fields once parseability is controlled for'",
+      "stated": 2,
+      "tolerance": 1.0,
+      "relations": [
+        {
+          "name": "category chain>=label",
+          "op": ">=",
+          "left": 33.4,
+          "right": 39.7
+        },
+        {
+          "name": "spatial  chain>=label",
+          "op": ">=",
+          "left": 37.2,
+          "right": 42.2
+        },
+        {
+          "name": "bin      chain>=label",
+          "op": ">=",
+          "left": 40.8,
+          "right": 33.1
+        }
+      ]
+    },
+    {
+      "id": "abstract-matches-baseline",
+      "kind": "count_true",
+      "location": "Abstract, p1",
+      "claim": "'chain-as-target supervision matches a label-only baseline on classification accuracy among parseable answers' (reads as all three fields)",
+      "stated": 3,
+      "tolerance": 1.0,
+      "relations": [
+        {
+          "name": "category chain>=label",
+          "op": ">=",
+          "left": 33.4,
+          "right": 39.7
+        },
+        {
+          "name": "spatial  chain>=label",
+          "op": ">=",
+          "left": 37.2,
+          "right": 42.2
+        },
+        {
+          "name": "bin      chain>=label",
+          "op": ">=",
+          "left": 40.8,
+          "right": 33.1
+        }
+      ]
+    },
+    {
+      "id": "appD-difficulty-vs-tertile-object-removal",
+      "kind": "compare",
+      "location": "Appendix D object_removal example vs Sec 4.3 cutoffs",
+      "claim": "Chain says 'moderate detection difficulty', i.e. the medium bin. The only tertile cutoffs the paper reports are Pico-Banana's (0.406/0.504, Sec 4.3). This example is rule-classified, so it is presumably binned against MagicBrush's own cutoffs - which the paper never reports, leaving the reader unable to verify any Appendix D difficulty claim.",
+      "name": "example difficulty score 0.21 vs Pico-Banana easy/medium cutoff",
+      "op": ">=",
+      "left": 0.21,
+      "right": 0.406
+    },
+    {
+      "id": "appD-difficulty-vs-tertile-other",
+      "kind": "compare",
+      "location": "Appendix D other example vs Sec 4.3 cutoffs",
+      "claim": "Chain says 'moderate detection difficulty', i.e. the medium bin. The only tertile cutoffs the paper reports are Pico-Banana's (0.406/0.504, Sec 4.3). This example is rule-classified, so it is presumably binned against MagicBrush's own cutoffs - which the paper never reports, leaving the reader unable to verify any Appendix D difficulty claim.",
+      "name": "example difficulty score 0.16 vs Pico-Banana easy/medium cutoff",
+      "op": ">=",
+      "left": 0.16,
+      "right": 0.406
+    },
+    {
+      "id": "appD-difficulty-vs-tertile-scene",
+      "kind": "compare",
+      "location": "Appendix D scene_transformation example vs Sec 4.3 cutoffs",
+      "claim": "Chain says 'moderate detection difficulty', i.e. the medium bin. The only tertile cutoffs the paper reports are Pico-Banana's (0.406/0.504, Sec 4.3). This example is rule-classified, so it is presumably binned against MagicBrush's own cutoffs - which the paper never reports, leaving the reader unable to verify any Appendix D difficulty claim.",
+      "name": "example difficulty score 0.19 vs Pico-Banana easy/medium cutoff",
+      "op": ">=",
+      "left": 0.19,
+      "right": 0.406
+    },
+    {
+      "id": "appD-difficulty-photometric-consistent",
+      "kind": "compare",
+      "location": "Appendix D photometric example vs Sec 4.3 cutoffs",
+      "claim": "control case: a Pico-Banana-labelled example whose score does sit in the medium band",
+      "name": "example difficulty score 0.48 vs Pico-Banana easy/medium cutoff",
+      "op": ">=",
+      "left": 0.48,
+      "right": 0.406
+    }
+  ]
+}
