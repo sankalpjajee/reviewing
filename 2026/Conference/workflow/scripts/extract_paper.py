@@ -15,10 +15,21 @@ glyph_font_fragmentation
     A run of single-character text shows where consecutive characters each use a
     *different* font resource. Typesetters emit runs of text per font; one font
     per character is not something LaTeX, Word or InDesign produces. It is the
-    signature of a payload built so that the glyphs render blank (or as unrelated
-    marks) while each font's ToUnicode map still hands the real letters to any
-    text extractor. This is the signal that catches the technique actually seen in
-    the wild, and it is essentially false-positive free.
+    signature of a payload where each character is drawn by a bespoke single-use
+    font subset, so that the glyph *rendered* and the codepoint the font's
+    ToUnicode map *reports* are different characters. This is the signal that
+    catches the technique actually seen in the wild, and it is essentially
+    false-positive free.
+
+    IMPORTANT: hidden does not mean invisible. In the case this detector was built
+    against, the substituted glyphs rendered the venue's own confidentiality
+    footer -- correct text, correct baseline, correct point size -- while the text
+    layer beneath yielded an instruction to an automated reviewer. The page looked
+    entirely normal. So do not dismiss a fragmentation run because the page "looks
+    fine": compare what the run *renders* against what it *extracts*. When the
+    generating tool names its fonts after the substitution (e.g.
+    `...ArialUnicodeMS_Pair_<hash>_004d_006f` = renders U+006F, extracts U+004D),
+    the rendered string can be reconstructed directly from the font names.
 font_resource_outlier
     A page carrying far more font resources than the document's own median. The
     corroborating symptom of the above.

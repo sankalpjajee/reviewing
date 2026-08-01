@@ -60,12 +60,19 @@ python workflow/scripts/audit_numbers.py reviews/$SLUG/artifacts/checks.json \
 | `run_review.sh` | 0-1 | Driver: scaffolds the review directory and gates on the integrity scan. |
 
 `extract_paper.py` is the non-obvious one. It does not look for white text, or
-not only — the technique it is built to catch renders each character of a hidden
-payload in its own single-use embedded font whose glyphs draw blank while the
-font's `ToUnicode` map still yields the real letter to any extractor. The
+not only — the technique it is built to catch draws each character of a payload in
+its own single-use embedded font subset, so that the glyph *rendered* and the
+codepoint the font *reports* to an extractor are different characters. The
 detector's primary signal is therefore structural: runs of single-character text
 shows where consecutive characters each switch font resource. Typesetting engines
-do not emit that. See the module docstring for the full signal list and why
+do not emit that.
+
+**Hidden does not mean invisible.** In the case this was built against, the
+substituted glyphs rendered the venue's own confidentiality footer at the correct
+baseline and point size, so the page looked entirely normal while the text layer
+beneath it carried an instruction to an automated reviewer. A page that "looks
+fine" is not evidence of anything; compare what a flagged run renders against what
+it extracts. See the module docstring for the full signal list and why
 white-on-white is reported at low confidence only.
 
 ## Design rules

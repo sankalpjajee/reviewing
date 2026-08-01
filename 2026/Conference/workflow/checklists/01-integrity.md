@@ -22,7 +22,7 @@ Exit 0 = clean · 1 = low-confidence notes only · 2 = high-confidence flag.
 
 | Signal | What it means |
 | --- | --- |
-| `glyph_font_fragmentation` | Each character drawn in its own single-use font whose glyphs render blank while `ToUnicode` still yields the letter. Not producible by any normal toolchain. |
+| `glyph_font_fragmentation` | Each character drawn in its own single-use font subset, so the glyph *rendered* and the codepoint *extracted* differ. Not producible by any normal toolchain. **Hidden does not mean invisible** — the cover text may be legitimate-looking boilerplate, so compare rendered against extracted rather than trusting that the page looks fine. |
 | `font_resource_outlier` | One page carrying many times the document's median font count. Corroborates the above. |
 | `invisible_render_mode` | Text render mode 3 — neither filled nor stroked. |
 | `sub_legible_font` | Text below the legibility floor. |
