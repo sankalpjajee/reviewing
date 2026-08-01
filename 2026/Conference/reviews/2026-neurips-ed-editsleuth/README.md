@@ -14,6 +14,7 @@ finding referred to the AC and excluded from the score.
 | [`00-intake.md`](00-intake.md) | Stage 0 — intake record |
 | [`01-integrity.md`](01-integrity.md) | Stage 1 — hidden-text finding, technique analysis, judgement |
 | [`03-stats.md`](03-stats.md) | Stage 3 — numeric audit results and statistical assessment |
+| [`06-ethics-review.md`](06-ethics-review.md) | Ethics Review form submission — severity selection and 5 concerns, most to least severe |
 | [`artifacts/`](artifacts/) | Extracted text, `integrity.json`, `checks.json`, `numeric_audit.json` |
 
 ## How this was produced
@@ -48,6 +49,15 @@ the version that withstands rebuttal, the remainder dropped.
 3. **The artifact cannot be reached.** Four present-tense release claims; zero
    artifact pointers in 26 pages; no licence named for either upstream corpus or for
    the release itself. On a dataset track, the artifact is the contribution.
+
+## Ethics review
+
+Filed separately as [`06-ethics-review.md`](06-ethics-review.md): **Serious (red)**,
+driven by the concealed-instruction finding, which is not mitigable within permissible
+revisions. Content-level concerns alone (licensing of two re-packaged corpora,
+identifiable persons in source imagery with no consent/PII discussion, a
+non-responsive safeguards answer, and a dual-use mitigation that does not act on the
+risk the authors name) would be **Moderate (yellow)**.
 
 ## Integrity finding (separate from the score)
 
