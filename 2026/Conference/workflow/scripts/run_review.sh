@@ -31,6 +31,9 @@ for stage in 00-intake 01-integrity 02-claims 03-stats 04-method 05-repro-ethics
     fi
 done
 [[ -f "$REVIEW_DIR/REVIEW.md" ]] || cp "$WORKFLOW/templates/review.md" "$REVIEW_DIR/REVIEW.md"
+# A blank checks.json per review, so Stage 3 always starts from an empty sheet and
+# no numbers can be inherited from whatever was reviewed last.
+[[ -f "$REVIEW_DIR/artifacts/checks.json" ]] || cp "$WORKFLOW/templates/checks.json" "$REVIEW_DIR/artifacts/checks.json"
 
 echo "==> Stage 0-1: extraction and integrity scan"
 set +e

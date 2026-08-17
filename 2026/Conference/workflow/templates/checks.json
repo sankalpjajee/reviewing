@@ -1,0 +1,57 @@
+{
+  "paper": "<title>",
+  "venue": "<track>",
+  "note": "Numbers transcribed verbatim from THIS submission. Transcribe them yourself rather than copying from another review — the point of the stage is that a number nobody re-entered is a number nobody checked. Set tolerances generously enough to absorb the paper's own rounding, so a FAIL is a real disagreement rather than a display artefact.",
+
+  "_kinds": {
+    "sum": "parts sum to total",
+    "percent": "100 * value / total equals the stated percentage",
+    "ratio": "numerator / denominator equals the stated value (scale: 100 for percentages)",
+    "pct_change": "100 * (new - old) / old equals the stated percentage change",
+    "delta": "new - old equals the stated difference",
+    "compare": "a relational assertion the prose makes (op: > >= < <= == !=)",
+    "count_true": "how many of several relations hold, against the number the prose claims"
+  },
+  "_priority": [
+    "1. Numbers the prose DERIVES from a table — conditional accuracies, ratios, percentage changes. Errors hide here because the reader's eye accepts them.",
+    "2. Counting claims — 'improves on two of three fields', 'no category above 21%'. Use count_true; it recomputes rather than trusting the prose.",
+    "3. Totals and percentages within a table.",
+    "4. Cross-references between a worked example and thresholds defined elsewhere.",
+    "Also record what is ABSENT: seeds, run counts, error bars, significance tests, chance performance."
+  ],
+  "_delete_these_underscore_keys_once_you_start": true,
+
+  "checks": [
+    {
+      "id": "<short-slug>",
+      "kind": "sum",
+      "location": "<Table N, pP>",
+      "claim": "<what the paper asserts, verbatim where it matters>",
+      "parts": [0, 0],
+      "total": 0,
+      "tolerance": 0
+    },
+    {
+      "id": "<derived-number-slug>",
+      "kind": "ratio",
+      "location": "<Sec N, pP>",
+      "claim": "<the derived figure the prose states>",
+      "numerator": 0,
+      "denominator": 1,
+      "scale": 100,
+      "stated": 0,
+      "tolerance": 0.1
+    },
+    {
+      "id": "<counting-claim-slug>",
+      "kind": "count_true",
+      "location": "<Sec N, pP>",
+      "claim": "<'method X beats baseline on N of M fields'>",
+      "stated": 0,
+      "tolerance": 0.0,
+      "relations": [
+        { "name": "<field> ours>=theirs", "op": ">=", "left": 0, "right": 0 }
+      ]
+    }
+  ]
+}

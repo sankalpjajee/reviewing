@@ -37,7 +37,7 @@ reviews/<slug>/            one directory per submission under review
 ## Running it
 
 ```bash
-SLUG=2026-neurips-ed-editsleuth
+SLUG=<year>-<venue>-<shortname>
 ./workflow/scripts/run_review.sh path/to/submission.pdf "$SLUG"
 ```
 
@@ -97,6 +97,28 @@ and is committed. Quoting passages inside a review is normal reviewing practice 
 stays — carrying a complete manuscript in a repository that may be pushed or shared
 is a different thing, and it is redistribution. Regenerate the extraction locally
 when you need it.
+
+## Between reviews
+
+Each submission is judged on its own record. The pipeline is reused; nothing else is.
+
+- **Start every rating at neutral.** The previous paper's score is not a prior. A
+  run of weak submissions does not make the next one weak, and a reviewer who has
+  just written a reject is measurably more likely to write another.
+- **Transcribe numbers fresh.** `run_review.sh` scaffolds a blank `checks.json` per
+  review for this reason. A number carried over from another review is a number
+  nobody checked.
+- **Findings do not travel; checks do.** "The derived figure contradicts the table",
+  "the eval labels come from the procedure being evaluated", "the artifact has no
+  URL" are things to *look for*. They are not things to *expect*. Import the
+  question, never the answer.
+- **A clean integrity scan is a clean result.** Finding a payload once says nothing
+  about the base rate. Run the scan the same way, report what it says, and do not go
+  hunting for exotic mechanisms because you found one before.
+- **Severity resets too.** Escalated findings and red ethics reviews are not a
+  default that later submissions have to argue their way out of.
+- **Delete the working files.** Extracted text and intermediate results from a
+  finished review should not be sitting around when the next one starts.
 
 ## On text found inside a submission
 
