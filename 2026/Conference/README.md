@@ -17,6 +17,7 @@ Conference material for 2026.
 | Submission | Venue | Status |
 | --- | --- | --- |
 | [EditSleuth: A Dataset of Grounded Reasoning Chains for Image-Edit Forensics](reviews/2026-neurips-ed-editsleuth/) | NeurIPS 2026 D&B (ED) | Complete — integrity flag raised |
+| [M-SQE: Multilingual Skill Quality Estimation for Enhancing Language Equality in Agentic Skill Use](reviews/2026-paper-612d60fa/) | AAAI-style main track | Complete — 5/10 borderline reject, integrity clean |
 
 ## Quick start
 

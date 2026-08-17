@@ -1,0 +1,220 @@
+{
+  "results": [
+    {
+      "id": "tbl1-audit-sum",
+      "kind": "sum",
+      "location": "Table 1, p1",
+      "claim": "Per-language estimated skill bodies sum to the claimed ~84,700 audited entries",
+      "status": "PASS",
+      "detail": "sum(parts)=84680 vs stated total=84700 (n_parts=7)"
+    },
+    {
+      "id": "tbl3-avg-msqe",
+      "kind": "ratio",
+      "location": "Table 3 Avg column, p6",
+      "claim": "M-SQE average 69.1 over the 9 cells",
+      "status": "PASS",
+      "detail": "1*622.1/9=69.1222 vs stated 69.1"
+    },
+    {
+      "id": "tbl3-avg-skillflow",
+      "kind": "ratio",
+      "location": "Table 3 Avg column, p6",
+      "claim": "SkillFlow average 65.6 (named strongest baseline)",
+      "status": "PASS",
+      "detail": "1*590.5/9=65.6111 vs stated 65.6"
+    },
+    {
+      "id": "tbl3-avg-retrieveonly",
+      "kind": "ratio",
+      "location": "Table 3 Avg column, p6",
+      "claim": "Retrieve-only average 62.8",
+      "status": "PASS",
+      "detail": "1*565.5/9=62.8333 vs stated 62.8"
+    },
+    {
+      "id": "tbl3-avg-random",
+      "kind": "ratio",
+      "location": "Table 3 Avg column, p6",
+      "claim": "Random average 55.1",
+      "status": "PASS",
+      "detail": "1*496.3/9=55.1444 vs stated 55.1"
+    },
+    {
+      "id": "tbl3-avg-promptonly",
+      "kind": "ratio",
+      "location": "Table 3 Avg column, p6",
+      "claim": "Prompt-only average 39.9",
+      "status": "PASS",
+      "detail": "1*359.4/9=39.9333 vs stated 39.9"
+    },
+    {
+      "id": "tbl3-avg-mdaq-rounding",
+      "kind": "ratio",
+      "location": "Table 3 Avg column, p6",
+      "claim": "M-DaQ average printed as 53.5; cells give 482.0/9 = 53.556, which rounds to 53.6. Trivial rounding-direction slip, documented not escalated.",
+      "status": "FAIL",
+      "detail": "1*482/9=53.5556 vs stated 53.5"
+    },
+    {
+      "id": "sec55-delta-vs-skillflow",
+      "kind": "delta",
+      "location": "Sec 5.5, p6",
+      "claim": "'+3.5pp over the strongest baseline, SkillFlow (65.6%)'",
+      "status": "PASS",
+      "detail": "69.1-65.6=3.5000 vs stated 3.5"
+    },
+    {
+      "id": "sec55-delta-vs-retrieveonly",
+      "kind": "delta",
+      "location": "Sec 5.5, p6",
+      "claim": "'+6.3pp over Retrieve-only ... on average'",
+      "status": "PASS",
+      "detail": "69.1-62.8=6.3000 vs stated 6.3"
+    },
+    {
+      "id": "sec55-delta-vs-random",
+      "kind": "delta",
+      "location": "Sec 5.5, p6",
+      "claim": "'+14.0pp over Random on average'",
+      "status": "PASS",
+      "detail": "69.1-55.1=14.0000 vs stated 14"
+    },
+    {
+      "id": "sec55-first-or-tied-all-9",
+      "kind": "count_true",
+      "location": "Sec 5.5 / Table 3, p6",
+      "claim": "'M-SQE first or tied-first against the single strongest baseline in all 9 domain-by-retriever settings'",
+      "status": "PASS",
+      "detail": "9 of 9 relations hold (paper says 9) :: Gen-BM 74.5>=best-other 71.3 74.5 >= 71.3 -> T; Gen-Ne 79.8>=74.5 79.8 >= 74.5 -> T; Gen-SF 76.6>=74.5 76.6 >= 74.5 -> T; Tool-BM 39.6>=33.2 39.6 >= 33.2 -> T; Tool-Ne 36.2>=36.2 (tie) 36.2 >= 36.2 -> T; Tool-SF 40.4>=37.4 40.4 >= 37.4 -> T; Cul-BM 90.4>=86.5 90.4 >= 86.5 -> T; Cul-Ne 90.4>=90.4 (tie) 90.4 >= 90.4 -> T; Cul-SF 94.2>=92.3 94.2 >= 92.3 -> T"
+    },
+    {
+      "id": "sec55-strictly-ahead-of-anchors-all-9",
+      "kind": "count_true",
+      "location": "Sec 5.5 / Table 3, p6",
+      "claim": "'M-SQE is also strictly ahead of both selection anchors in all 9 settings' (checked against the stronger anchor, Retrieve-only)",
+      "status": "PASS",
+      "detail": "9 of 9 relations hold (paper says 9) :: Gen-BM 74.5>71.3 74.5 > 71.3 -> T; Gen-Ne 79.8>70.2 79.8 > 70.2 -> T; Gen-SF 76.6>74.5 76.6 > 74.5 -> T; Tool-BM 39.6>28.7 39.6 > 28.7 -> T; Tool-Ne 36.2>25.7 36.2 > 25.7 -> T; Tool-SF 40.4>37.4 40.4 > 37.4 -> T; Cul-BM 90.4>78.8 90.4 > 78.8 -> T; Cul-Ne 90.4>88.5 90.4 > 88.5 -> T; Cul-SF 94.2>90.4 94.2 > 90.4 -> T"
+    },
+    {
+      "id": "abstract-at-least-3p5-per-retriever-reading",
+      "kind": "count_true",
+      "location": "Abstract, p1",
+      "claim": "'task success exceeds existing baseline's average by at least +3.5 points across three different retrievers' \u2014 PER-RETRIEVER reading: (M-SQE 3-domain avg minus strongest baseline 3-domain avg) >= 3.5 within each retriever column. Left values are M-SQE minus SkillFlow (strongest per retriever): BM25 68.167-63.667, Neural 68.800-65.733, SkillFlow-retr 70.400-67.433.",
+      "status": "FAIL",
+      "detail": "1 of 3 relations hold (paper says 3) :: BM25 gain 4.50>=3.5 4.5 >= 3.5 -> T; Neural gain 3.07>=3.5 3.07 >= 3.5 -> F; SkillFlow-retr gain 2.97>=3.5 2.97 >= 3.5 -> F"
+    },
+    {
+      "id": "abstract-at-least-3p5-average-reading",
+      "kind": "compare",
+      "location": "Abstract, p1",
+      "claim": "Same sentence, AVERAGE-OF-9 reading: 69.12 - 65.61 = 3.51 >= 3.5. Holds with rounding to spare of 0.01.",
+      "status": "PASS",
+      "detail": "relation overall avg gain 3.51 >= 3.5 3.51 >= 3.5 -> holds"
+    },
+    {
+      "id": "tbl4-consistency-with-tbl3",
+      "kind": "count_true",
+      "location": "Table 4 vs Table 3 (BM25 column), p6",
+      "claim": "Ablation's full-M-SQE row equals Table 3's BM25 cells (74.5 / 39.6 / 90.4)",
+      "status": "PASS",
+      "detail": "3 of 3 relations hold (paper says 3) :: General 74.5==74.5 74.5 == 74.5 -> T; Tool 39.6==39.6 39.6 == 39.6 -> T; Cultural 90.4==90.4 90.4 == 90.4 -> T"
+    },
+    {
+      "id": "fig4-top3-consistency",
+      "kind": "ratio",
+      "location": "Fig 4 vs Table 3, p7",
+      "claim": "Fig 4's Top-3 point (68.2) equals the three-domain BM25 average of Table 3's M-SQE cells: (74.5+39.6+90.4)/3",
+      "status": "PASS",
+      "detail": "1*204.5/3=68.1667 vs stated 68.2"
+    },
+    {
+      "id": "fig6-main-cell-ro",
+      "kind": "ratio",
+      "location": "Fig 6 main setting vs Table 3, p7",
+      "claim": "Fig 6's main-config Retrieve-only (59.6) equals (71.3+28.7+78.8)/3 from Table 3",
+      "status": "PASS",
+      "detail": "1*178.8/3=59.6000 vs stated 59.6"
+    },
+    {
+      "id": "fig6-main-cell-delta",
+      "kind": "delta",
+      "location": "Fig 6, p7",
+      "claim": "Main-config gain labelled +8.6pp (59.6 -> 68.2)",
+      "status": "PASS",
+      "detail": "68.2-59.6=8.6000 vs stated 8.6"
+    },
+    {
+      "id": "tbl5-msqe-general-int",
+      "kind": "percent",
+      "location": "Table 5, p7",
+      "claim": "M-SQE general 38.30% consistent with 36/94 (integer count over stated n)",
+      "status": "PASS",
+      "detail": "100*36/94=38.2979 vs stated 38.3"
+    },
+    {
+      "id": "tbl5-msqe-tool-int",
+      "kind": "percent",
+      "location": "Table 5, p7",
+      "claim": "M-SQE tool 13.21% consistent with 35/265",
+      "status": "PASS",
+      "detail": "100*35/265=13.2075 vs stated 13.21"
+    },
+    {
+      "id": "tbl5-msqe-cultural-int",
+      "kind": "percent",
+      "location": "Table 5, p7",
+      "claim": "M-SQE cultural 50.00% consistent with 26/52",
+      "status": "PASS",
+      "detail": "100*26/52=50.0000 vs stated 50"
+    },
+    {
+      "id": "tbl5-ro-margin-tool",
+      "kind": "delta",
+      "location": "Table 5, p7",
+      "claim": "Trajectory experiment: M-SQE beats Retrieve-only on tool by 13.21-12.83 = 0.38pp, i.e. one task out of 265",
+      "status": "PASS",
+      "detail": "13.21-12.83=0.3800 vs stated 0.38"
+    },
+    {
+      "id": "tbl5-ro-margin-cultural",
+      "kind": "delta",
+      "location": "Table 5, p7",
+      "claim": "Trajectory experiment: M-SQE ties Retrieve-only on cultural (50.00 both), margin 0.0",
+      "status": "PASS",
+      "detail": "50-50=0.0000 vs stated 0"
+    },
+    {
+      "id": "tbl3-int-consistency-msqe-cells",
+      "kind": "count_true",
+      "location": "Table 3 M-SQE row vs Table 2 task counts",
+      "claim": "M-SQE's nine cells are all consistent with integer success counts over n=94/265/52 (deviation of stated % from nearest k/n under 0.05pp). Left values are |stated - nearest_k/n| in pp: 74.5~70/94, 79.8~75/94, 76.6~72/94, 39.6~105/265, 36.2~96/265, 40.4~107/265, 90.4~47/52, 90.4~47/52, 94.2~49/52.",
+      "status": "PASS",
+      "detail": "9 of 9 relations hold (paper says 9) :: Gen-BM |74.5-74.468| 0.032 <= 0.05 -> T; Gen-Ne |79.8-79.787| 0.013 <= 0.05 -> T; Gen-SF |76.6-76.596| 0.004 <= 0.05 -> T; Tool-BM |39.6-39.623| 0.023 <= 0.05 -> T; Tool-Ne |36.2-36.226| 0.026 <= 0.05 -> T; Tool-SF |40.4-40.377| 0.023 <= 0.05 -> T; Cul-BM |90.4-90.385| 0.015 <= 0.05 -> T; Cul-Ne |90.4-90.385| 0.015 <= 0.05 -> T; Cul-SF |94.2-94.231| 0.031 <= 0.05 -> T"
+    },
+    {
+      "id": "tbl3-random-not-integer-consistent",
+      "kind": "count_true",
+      "location": "Table 3 Random row vs Table 2 task counts",
+      "claim": "Random-anchor cells are NOT all consistent with single-draw integer counts (e.g. Cul-BM 60.0: nearest k/52 are 59.62 and 61.54; Cul-SF 79.2: nearest are 78.85 and 80.77; Gen-BM 66.2: nearest k/94 are 65.96 and 67.02), implying seed-averaging the main text never states. Left values are |stated - nearest_k/n| in pp.",
+      "status": "PASS",
+      "detail": "0 of 3 relations hold (paper says 0) :: Random Cul-BM 60.0 within 0.05 of a k/52 0.385 <= 0.05 -> F; Random Cul-SF 79.2 within 0.05 of a k/52 0.354 <= 0.05 -> F; Random Gen-BM 66.2 within 0.05 of a k/94 0.245 <= 0.05 -> F"
+    },
+    {
+      "id": "tbl2-k-rule-consistency",
+      "kind": "count_true",
+      "location": "Sec 5.3 K-rule vs Table 2, p5",
+      "claim": "K = 10*floor(|S|/1000) reproduces Table 2's candidate depths: floor(1750/1000)*10=10, floor(2299/1000)*10=20, floor(5285/1000)*10=50",
+      "status": "PASS",
+      "detail": "3 of 3 relations hold (paper says 3) :: General 10==10 10.0 == 10.0 -> T; Tool 20==20 20.0 == 20.0 -> T; Cultural 50==50 50.0 == 50.0 -> T"
+    },
+    {
+      "id": "fig6-range-claim",
+      "kind": "count_true",
+      "location": "Sec 5.5 Backbone Robustness vs Fig 6, p7",
+      "claim": "'M-SQE remains +3.5-9.0pp above Retrieve-only' across the six backbone combos; Fig 6 deltas are +8.6, +9.0, +6.4, +7.0, +3.5, +5.0 \u2014 all within [3.5, 9.0]",
+      "status": "PASS",
+      "detail": "6 of 6 relations hold (paper says 6) :: +8.6 in range 8.6 >= 3.5 -> T; +9.0 in range 9.0 >= 3.5 -> T; +6.4 in range 6.4 >= 3.5 -> T; +7.0 in range 7.0 >= 3.5 -> T; +3.5 in range 3.5 >= 3.5 -> T; +5.0 in range 5.0 >= 3.5 -> T"
+    }
+  ]
+}
