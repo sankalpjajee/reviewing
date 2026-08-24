@@ -19,7 +19,7 @@ consistent this workflow has audited: every structural check passes.
   Cul-Ne); "strictly ahead of both anchors in all 9" → 9/9.
 - **Integer consistency:** all nine M-SQE cells sit within 0.032pp of an exact
   k/n over the stated task counts (70/94 … 49/52). Extended by the stats agent:
-  **all 45 deterministic cells** across Tables 3/4/5 are integer-consistent.
+  **all 102 deterministic cells** across Tables 3/4/5 are integer-consistent (81 non-Random Table 3 cells + 9 + 12; exhaustively recounted at re-evaluation — the workflow agent's original count of 45 was an undercount).
 - **Cross-artifact:** Fig 4 Top-3 = Table 3 BM25 mean (68.17→68.2); Fig 6 main
   cell (59.6/68.2/+8.6) = Table 3-derived; Fig 6 "+3.5–9.0pp" range matches its
   six deltas; Table 4's M-SQE row = Table 3's BM25 cells; K-rule reproduces all

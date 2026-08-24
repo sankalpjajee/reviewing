@@ -41,9 +41,10 @@ gain to the novel machinery is never isolated.
 These were verified adversarially, not taken on trust.
 
 1. **The tabulation is airtight — a property we verified exhaustively.** All ten
-   Table 3 row averages recompute exactly; **all 45 deterministic cells across
-   Tables 3, 4, and 5 are consistent with integer success counts over the stated
-   task totals** (e.g. 39.6 = 105/265, 94.2 = 49/52, 38.30 = 36/94). One apparent
+   Table 3 row averages recompute exactly; **all 102 deterministic cells across
+   Tables 3, 4, and 5 (81 + 9 + 12; Table 3's seed-averaged Random row excluded)
+   are consistent with integer success counts over the stated task totals**
+   (e.g. 39.6 = 105/265, 94.2 = 49/52, 38.30 = 36/94). One apparent
    rounding anomaly (M-DaQ's 53.5 vs a naive 53.556) turns out to be evidence of
    care: averaging the exact count fractions gives 53.546, so the Avg column was
    computed from unrounded values. Cross-artifact checks all pass: Fig 4's Top-3
@@ -145,6 +146,16 @@ All deterministic rows are single runs; the Random row's draw count is unstated
 aggregate anchor comparison is robust — the Tool-Use margins over Retrieve-only
 are +29 and +28 tasks of 265 and would clearly survive testing. The defensible
 claim is aggregate superiority plus one strong domain, not nine wins.
+
+Two aggravating details. Task-weighted (micro) rather than domain-averaged, the
+per-retriever margins over SkillFlow are +5.4 / **+1.7** / +2.9pp — the Neural
+margin is 7 tasks of 411. And Fig 6's claim of "ruling out ... scorer or solver
+bias as explanations for the gains" measures every backbone-swap margin against
+**Retrieve-only**, not the strongest baseline; SkillFlow averages ~2.8pp above
+Retrieve-only, so the +3.5 and +5.0 Fig 6 cells leave the strongest-baseline
+margin potentially under ~1–2pp in swapped configurations — re-established
+nowhere. The cultural cells (86.5–94.2%) also sit near ceiling, compressing all
+margins in that domain.
 
 ### W4. The trajectory-generalization contribution rests on 3 net tasks of 411. **[wrong (overreach) · major]**
 
@@ -336,3 +347,14 @@ questions are answerable from existing logs plus one cheap experiment.
 audit here *passed* almost everywhere (25/27), the integrity scan was clean and
 reported as clean, and the strengths section is longer than in any prior review
 this workflow has produced because this paper earned it.
+
+**Deadline-day re-evaluation (2026-08-24).** Before submission, two independent
+passes were run. (1) A fresh-eyes reviewer with no access to this review read the
+paper cold and converged on the same verdict — 5/10 borderline reject — with the
+same top findings ranked in the same order, adding the micro-averaged
+per-retriever margins, the Fig 6 comparator observation, and the cultural ceiling
+note, all now folded into W3. (2) A red-team pass re-verified the review's quoted
+numbers against the paper; the one defect it surfaced was in our own strengths
+census — "45 deterministic cells" was an *undercount*: an exhaustive recount
+gives **102/102** integer-consistent cells (81 + 9 + 12), corrected above. The
+score stands at 5/10.

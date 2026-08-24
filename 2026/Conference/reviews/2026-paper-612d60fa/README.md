@@ -26,7 +26,7 @@ findings survived** (23 confirmed, 19 weakened); 32 strengths recorded.
 
 ## The shape of the verdict
 
-The execution is unusually strong — all 45 deterministic table cells are
+The execution is unusually strong — all 102 deterministic table cells are
 integer-consistent with the stated task counts, every cross-figure value
 reconciles, the confound controls are real, and the two motivating citations were
 verified against their sources. What holds it under the bar is the claim layer:
