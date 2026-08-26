@@ -1,0 +1,86 @@
+# Official Review — AAAI 2027 AISI Track form (M-SQE)
+
+Copy-paste content for each field. Derived from REVIEW.md (5/10 borderline reject
+→ AISI scale 3: Weak Reject), findings.json, and the deadline-day re-evaluation.
+
+---
+
+## Title
+
+Well-executed multilingual skill-selection framework with verifiably honest tables; the headline equality and attribution claims outrun the evidence — weak reject
+
+## Summary
+
+The paper addresses the English-centricity of community "agent skill" libraries (reusable procedural documents that LLM agents retrieve and follow). An audit of ~84,700 public skill entries finds in-language skill content concentrated in a few high-resource languages, with zero for Swahili and Hindi. Since scalable remedies (machine translation, model self-generation) produce skills of unreliable quality, the authors propose M-SQE, a post-retrieval quality-estimation layer: an LLM scores each retrieved candidate under a query-independent "Theory" rubric (correctness, completeness, executability, cross-lingual faithfulness, localization, context efficiency) and a query-grounded "Action" rubric (task/procedure/constraint/output fit, language fit, misleading risk), and a prompted domain router combines the two scores via one of three domain-specific fusion rules (convex mix for general tasks, a Theory≥65 gate for tool use, equal z-scored fusion for cultural tasks). Evaluation spans three domains (94 general / 265 tool-use / 52 cultural tasks; six culture regions; seven languages) over author-constructed three-layer pools (ecological-style + MT + self-generated) and three retrievers. Reported results: 69.1% average task success across the nine domain×retriever settings, +3.5pp over the strongest baseline (SkillFlow) and +6.3pp over Retrieve-only, with the largest reported gains on Hindi (+12.9pp) and Swahili (+5.6pp) in tool use; ablations, a router-corruption sweep, a backbone-swap grid, and a small trajectory fine-tuning experiment support robustness; the evaluation set, pools, and implementation are pledged for release.
+
+## Review
+
+**Note on materials:** my review is based on the main paper; the supplementary appendices (A–I) were not available to me, so claims deferred there (significance tests in App. B, rubrics in App. D, audit protocol in App. A, leakage control in App. E, limitations in App. H) are treated as unverifiable-from-provided-material rather than absent, and my rating accounts for that.
+
+**Quality.** At the data level this is an unusually careful paper, and I verified that adversarially rather than taking it on trust: all ten Table 3 row averages recompute exactly; **all 102 deterministic cells across Tables 3, 4, and 5 are consistent with integer success counts over the stated task totals** (e.g., 39.6 = 105/265, 94.2 = 49/52); every cross-figure value I checked (Fig. 4's Top-3 point, Fig. 6's main cell, Fig. 5's floor and star, pool sums, the candidate-depth rule) reconciles with the tables; and the two load-bearing motivational citations (SkillFlow's 70.1% adoption-without-gain; SkillsBench's curated-helps/self-generated-hurts) check out against their sources. The confound controls are real: the scorer=solver worry is probed with off-diagonal backbone swaps that stay positive; the router-corruption sweep (1,000 seeds/rate, empirical 95% bands) honestly bounds the authors' own component. The quality problems sit one level up, in what the claims say the numbers show (see Cons and the Strengths/Weaknesses field).
+
+**Clarity.** Generally well written and well organized; the fusion rules are specified at formula level with the actual constants. Specific lapses: Fig. 3 never states its aggregation (its per-language/region rates are arithmetically impossible as single-retriever rates over the stated task counts and reconcile only as three-retriever pooling — which I verified they do, exactly); the +12.9/+5.6pp deltas never state their comparator; two Fig. 6 delta labels contradict their own printed endpoints by 0.1pp; the abstract's headline sentence does not survive its natural reading (below).
+
+**Originality.** The scoring mechanism itself — pointwise LLM rubric scoring plus convex/gated/z-normalized score fusion — is standard technique; the LLM-as-reranker and LLM-as-judge literatures that establish this go uncited. What is genuinely new: the multilingual skill-supply audit (the citable "zero in-language skills for Swahili/Hindi" finding), the three-layer mixed-provenance pool design, and the multilingual three-domain skill-use evaluation with deterministic checkers. "First post-retrieval quality-estimation framework purpose-built for multilingual agent skills" is true only through all four of its qualifiers.
+
+**Significance.** The problem is real and the aggregate result is real (+6.3pp over Retrieve-only, robust to backbone swaps; the Tool-Use margins of +29/+28 tasks of 265 would survive significance testing). But the paper's distinctive claim — advancing language *equality* — is never measured, and the design cannot attribute the gain to the proposed machinery rather than to generic LLM judging.
+
+**Pros:**
+- Real, previously undocumented problem, quantified by a first-of-kind audit (~84,700 entries; zero Swahili/Hindi in-language skills).
+- Verifiably honest empirical reporting: 102/102 deterministic cells integer-consistent; all cross-artifact numbers reconcile; unflattering results (a failed ablation direction, ties, the router's modest contribution) are reported rather than hidden.
+- Genuine robustness battery: three retriever families, budget sweep with a mechanistically coherent pattern (margin widens as budget tightens, +3.4pp at Top-10 → +9.7pp at Top-1), router corruption to 90% with real error bars, scorer/solver/pool backbone swaps.
+- Two reusable artifacts (audit, three-layer pools) plus a pledged release of evaluation set, pools, and implementation.
+
+**Cons:**
+- The title/abstract-level equality claim is unmeasured: no dispersion, min-language, or gap-to-baseline metric anywhere; the only evidence is absolute gains on two languages in one domain, with no stated comparator; the paper's own Fig. 3 numbers retain a 27–43pp cross-language spread with Chinese and Korean now lowest — consistent with inequality relocated, not narrowed.
+- No rubric-free LLM-rerank baseline (same LLM, generic relevance/usefulness prompt), so the two-view rubric's contribution is never separated from "any strong LLM judging candidates helps." The paper's own Action-only ablation already captures all but 7 tasks of 411 of the full framework's gain, and the ablation runs in only one of nine settings.
+- Statistical thinness at the claimed granularity: five of nine per-cell margins over the strongest baseline are 1–5 tasks, two are exact ties (never individually acknowledged); +5/94 cannot reach p<0.05 even fully one-sided; the nine settings reuse the same 411 tasks (correlated); per-region deltas (+6.6/+8.4pp) equal one task each; task-weighted per-retriever margins are +5.4/+1.7/+2.9pp; cultural cells sit near ceiling (86.5–94.2%).
+- The trajectory fine-tuning contribution rests on +2/+1/0 tasks across the three domains (including an unacknowledged exact tie at 26/52), which no statistical treatment can rescue; "beneficial training-data constructor" should be withdrawn or re-run with seeds.
+- The abstract's "exceeds existing baseline's average by at least +3.5 points across three different retrievers" is false per-retriever (+4.5/+3.1/+3.0 vs the strongest baseline) and holds only as the pooled nine-cell average at exactly +3.51.
+- Closed evaluation universe: all pool layers are author-constructed (including the "ecological-style" layer), the same expert team wrote both the quality rubric and all task rewrites, the source-included Top-N protocol never measures the motivating no-usable-skill regime, and the router's three domains are exactly the three evaluated domains.
+
+## Strengths And Weaknesses
+
+**1) Significance of the problem (rating: 3/4).** The skill-layer language gap is a genuine, previously unquantified instance of AI language inequity, and the audit makes it concrete and citable (zero in-language skill bodies for Swahili and Hindi among ~84,700 entries). It is a new take at a new layer of the stack on a problem family (language inequity in AI) the community has considered before — hence 3 rather than 4. The motivating premises are accurately sourced (I verified the 70.1% adoption statistic and the SkillsBench findings against the cited papers).
+
+**2) Engagement with literature (rating: 2/4).** Within its two chosen lines (skill retrieval; multilingual data quality) engagement is strong and even adversarial — SkillFlow is named state-of-the-art, reimplemented as both retriever and selector, and beaten on top of its own pipeline; the rubric's basis (MIDB's taxonomy) is credited with the new dimensions identified. But the paper's core mechanism belongs to the LLM-as-reranker (RankGPT line) and LLM-as-judge rubric-scoring literatures, which are entirely uncited, as are score-fusion precedents for its three standard-form fusion rules; several citation groups are bundled without individual discussion; and for an AISI submission about language equity, engagement with work outside computer science (sociolinguistics, language policy, digital-divide scholarship) is essentially absent — one ACL survey and one news article carry the equity framing.
+
+**3) Significance to the AI community (rating: 2/4).** The transferable contributions are the audit methodology, the mixed-provenance pool design, and the evaluation suite — useful to agent-tooling and multilingual-NLP researchers. The scoring mechanism is standard technique in a new setting, and the paper's own ablation shows the architecturally novel parts (Theory view, router, fusion rules) add 7 tasks of 411 beyond single-view Action scoring; the missing rubric-free LLM baseline leaves open whether even that is specific to the design.
+
+**4) Soundness (rating: 2/4).** The core aggregate claim is well supported: +6.3pp over Retrieve-only across nine settings, integer-verifiable, backbone-robust, with Tool-Use margins (+29/+28 tasks of 265) that would clearly survive testing. But several important claims are not: (a) the equality claim (title, abstract, contribution 2, Sec. 2) has no supporting metric anywhere in the paper, and the reported per-language spread is consistent with relocated inequality; (b) the abstract's "at least +3.5 across three retrievers" fails under its per-retriever reading (+3.1/+3.0 on two of three); (c) the per-setting "first or tied-first in all 9" is arithmetically true but statistically undefended at margins of 1–5 tasks with two unacknowledged ties, with significance deferred to an appendix I could not access; (d) the trajectory-generalization contribution rests on +2/+1/0 tasks with no variance; (e) sub-group claims (+6.6/+8.4pp regions) are single-task effects presented as evidence of cultural competence; (f) Fig. 6's "ruling out scorer or solver bias" measures every swap against Retrieve-only rather than the strongest baseline, so the headline margin is re-established nowhere. The closed, author-constructed evaluation universe (pools, tasks, checkers, and rubric all from the same team, source-included Top-N protocol) is individually defensible but jointly caps external validity — mitigated, to the authors' credit, by real controls (solver blinding, prompt-only necessity anchors, backbone swaps, router corruption).
+
+**5) Facilitation of follow-up work (rating: 3/4).** The release pledge (footnote 1) covers exactly the reproduction-critical assets — evaluation set, pools, implementation — and the main text specifies the full decision rule at formula level with actual constants, model names, pool sizes, and the candidate-depth rule. Withheld from the main text: scoring prompts, decoding parameters, seeds, checker code, and the audit's index list (all deferred to the supplementary I could not verify); the scorer/router/solver is an unpinned commercial API model, so exact headline numbers may not be reproducible long-term, though Table 5's fine-tuned open-weights model gives one durable result chain. Rating assumes the pledged release materializes; without it this becomes a 2.
+
+**6) Scope and promise for social impact (rating: 2/4).** The deployment path for a post-retrieval quality filter is real and near-term, and the intervention targets the right layer for underserved-language users. But the claimed social outcome — narrowed language inequality — is exactly what the evaluation does not measure; the residual 27–43pp cross-language spread in the paper's own figures, the absence of any inference-cost accounting (up to ~100 LLM scoring calls per query at K=50, versus zero for retrieve-only — a real barrier for exactly the low-resource deployments the paper targets), and the simulated (author-constructed) zero-resource condition mean considerably more work is needed before practice changes.
+
+**Presentation.** Clear overall; specific fixes needed: state Fig. 3's aggregation and per-cell task counts; state the comparator for every headline delta; reconcile the two inconsistent Fig. 6 delta labels; scope the abstract's +12.9/+5.6pp to tool use; correct or reword the abstract's "+3.5 across three retrievers"; acknowledge the two per-cell ties in prose; state the Random row's draw count; hedge or remove the Table 5 conclusion.
+
+## Questions For The Authors
+
+1. **Equality (decisive for the paper's framing).** Please report per-language and per-region success for M-SQE, Retrieve-only, and Random as numbers, with per-cell task counts, the exact comparator and retriever aggregation behind +12.9/+5.6/+6.6/+8.4pp, and a before/after cross-language dispersion or gap-to-best metric. Does M-SQE reduce the cross-language spread relative to Retrieve-only, or relocate it (zh/ko now lowest in your Fig. 3)? This should be computable from existing logs.
+2. **Attribution (decisive for the methods contribution).** Run the same scorer LLM with a generic, rubric-free relevance/usefulness reranking prompt over identical candidate sets (at minimum BM25 × three domains), and extend the Theory/Action ablation beyond the single BM25/Top-3 setting. How much of the margin survives against "same LLM, generic prompt," and is the 7-task increment beyond Action-only stable across retrievers?
+3. **Statistics.** What exactly does Appendix B contain — paired per-cell tests (e.g., McNemar) for the nine Table 3 settings and a task-level aggregate test? How many draws produce the Random row? For Table 5, please provide multi-seed fine-tuning results or downgrade the "training-data constructor" claim; and state the router-accuracy protocol (n, label provenance, flip semantics for the corruption sweep).
+4. **Cultural checkers.** For norm-type tasks, how were regionally variant norms handled — does the verifiability filter exclude contested norms, who authored the accepted-paraphrase sets, and were they frozen before method comparison? One example of a discarded contested task would be convincing.
+5. **Release and licensing.** Please confirm the released pools' licensing posture given their derivation from community skill files, official product skills, and API documentation, and state the license for the release itself.
+
+## Ethical Considerations
+
+Not adequately addressed in the main text, though likely addressable in revision; I do not believe specialized ethics review is required. Specifics: (1) the mandated social-impact section argues benefits only — no sentence in the main paper engages any risk, harm, or misuse of the work itself; all limitations/responsible-use discussion is deferred to an appendix reviewers may not reach, and for a track paper the risk summary belongs in the main text. (2) Cultural tasks check contested norm-type answers (etiquette, gift-giving, customary amounts) against single gold answers under a six-region scheme that collapses "Africa and the Middle East" into one bucket — an essentialism risk the paper never names; how regional variation was handled is unverifiable from the provided material. (3) No annotator reporting (team size, recruitment, compensation) for the expert team that built the rubric and all task rewrites. (4) No licensing statement for a pledged release derived from community skill files, official product skills, and API documentation. (5) No data-collection concerns beyond these: the audit covers public repositories, no human subjects, no PII. Items 1–4 are fixable by disclosure and a risk paragraph; I would want them addressed in the author response.
+
+## Ratings (form selections)
+
+| Field | Selection |
+| --- | --- |
+| Significance Of The Problem | **3** |
+| Engagement With Literature | **2** |
+| Significance To The AI Community | **2** |
+| Soundness | **2** |
+| Facilitation Of Follow Up Work | **3** |
+| Scope And Promise For Social Impact | **2** |
+| Resources | **Yes** |
+| Overall Evaluation | **3: Weak Reject** |
+| Confidence | **4** |
+| Expertise | reviewer's own — see note |
+
+Note on Expertise: this field describes the human reviewer's relationship to the
+topic and must be set by them, not derived from this analysis.
