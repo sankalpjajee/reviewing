@@ -1,0 +1,78 @@
+KNOWN FINDINGS (do not re-report these or trivial variants of them):
+
+- [abstract-margin-fails-per-retriever] Abstract's "at least +3.5 points across three different retrievers" fails under its natural per-retriever reading
+- [equality-claimed-not-measured] "Equality" is claimed in title/abstract/contributions but no gap or dispersion metric is ever measured; M-SQE's own per-language numbers show 27-43pp residual spread
+- [headline-deltas-comparator-and-scope] The +12.9pp/+5.6pp Hindi/Swahili deltas never state their comparator, the superlative "lifts most" is unverifiable, and the abstract omits that they are Tool-Use-only
+- [table5-trajectory-overreach] Table 5's "best fine-tuned model" claim rests on a 3-task total margin (out of 411 tasks) with a tie in one of three domains
+- [cultural-mechanism-inference-unlicensed] Sec 2's claim that region-consistency "is the evidence" of cultural correctness over surface fluency is not licensed by the design, and rests on tiny per-region samples with an unstated comparator
+- [fig3-aggregation-basis-unstated] Fig 3 never states what it aggregates; its labels are provably not a single-retriever series and can only be three-retriever averages
+- [fig6-delta-labels-inconsistent] Two of six Fig 6 delta labels do not match their own printed endpoints
+- [thin-margins-significance-unverifiable] Several verified headline wins are 1-2 task margins or ties, and the significance analysis backing them is in unprovided Appendix B
+- [fig3-rates-impossible-at-stated-n] Fig. 3 per-breakdown success rates are arithmetically impossible as single-retriever rates over the stated task counts; an undisclosed aggregation (retriever pooling) must be involved
+- [social-impact-deltas-are-one-to-two-tasks] The Sec. 2 per-region 'strong gains' (+6.6pp South Asia, +8.4pp Oceania) correspond to 1-2 task successes and sit off every achievable exact grid
+- [per-cell-margins-below-significance-threshold] In 5 of 9 settings the margin over the strongest baseline is 1-5 tasks (plus 2 exact ties); at most one, possibly two, per-cell wins could survive a paired significance test
+- [table5-conclusion-rests-on-net-three-tasks] The trajectory-generalization claim (Table 5) rests on a net margin of 3 task successes out of 411, including an unacknowledged tie
+- [random-row-aggregation-and-run-variance-unstated] The Random baseline is averaged over an unstated number of draws, and no other row carries any variance information
+- [abstract-at-least-3-5-fails-per-retriever] The abstract's 'at least +3.5 points across three different retrievers' does not hold at the per-retriever level
+- [candidate-depth-rule-degenerate-and-post-hoc] The candidate-depth rule K = 10*floor(|S|/1000) is degenerate for pools under 1,000 skills and reads as a post-hoc fit to the three pool sizes
+- [router-accuracy-underspecified] Router evaluation (98.5%) is under-specified: n and label provenance unstated, evaluated in-sample on the routed queries, and 'flipped' is undefined for a 3-class label
+- [fig6-deltas-contradict-printed-endpoints] Two of six Fig. 6 deltas contradict their own printed endpoints by 0.1pp
+- [audit-total-consistent-but-method-caveats-thin] Table 1's audit sums correctly (~84,680 vs '~84,700') but the main text gives no method caveats for 'Est.' counts, the exact-zero claims, or cross-index double counting
+- [missing-plain-llm-judge-baseline] No rubric-free LLM-rerank baseline; Action-only already captures nearly all of the gain, leaving the novel machinery's contribution at 7 tasks of 411
+- [trajectory-generalization-overclaim] Table 5's 'beneficial training-data constructor' conclusion rests on 3 net tasks out of 411, including a 0.0pp tie on Cultural
+- [no-external-evaluation-universe] Every component of the evaluation universe is author-constructed; the 'mirrors today's ecosystem' claim is asserted, not validated
+- [rubric-task-team-circularity] The team that designed M-SQE's quality dimensions also rewrote and composed every evaluation task
+- [source-included-pools-elide-motivating-regime] Source-included pools guarantee a well-matched planted skill per query, so the motivating 'no usable in-language skill' regime is never evaluated
+- [router-taxonomy-benchmark-tautology] The domain taxonomy equals the benchmark's own partition; the 'five added examples' extensibility claim covers routing but not the hand-designed fusion adapter
+- [subgroup-equality-claims-underpowered] Per-region and per-language equality claims rest on cells of roughly 8-16 tasks, where one task moves 6-12pp
+- [quality-scorer-baselines-structural-mismatch] The three 'quality scorer' baselines are query-agnostic by design and predictably lose, sometimes to Random or the no-skill floor
+- [paraphrase-checker-independence-unverifiable] 'Accepted paraphrase' checkers embed human acceptance sets whose authorship and freezing protocol are unstated in the main text
+- [no-cost-reporting] No inference cost, latency, or call-count reporting for a method that adds up to ~100 LLM rubric calls per query over a zero-cost baseline
+- [uncited-llm-reranker-and-fusion-lines] The paper's core mechanism (prompted LLM rubric scoring of retrieved candidates + classic score fusion) is standard, and the literature establishing that is entirely uncited
+- [first-claim-qualifier-load] The 'first' claim is narrow-but-true; all four qualifiers are load-bearing and the cited SOTA already contains a post-retrieval LLM selection stage for agent skills
+- [data-quality-line-mischaracterized] Positioning overstates the data-quality line as judging 'only the data's own language quality', contradicting the paper's own description of DEITA two sentences earlier
+- [verified-synthesis-line-unpositioned] The verified-skill-synthesis line (SkillGen, CoEvoSkills) is cited but excluded from the positioning, and the citation bundle presenting them as multilingual synthesis misfits their scope
+- [citation-hygiene-and-single-cluster-reliance] Citation practice: two references never cited in the main text, thin support for a 'widely adopted' claim, and several load-bearing roles filled from one overlapping-author cluster
+- [abstract-per-retriever-3-5pp-overstated] Abstract's 'at least +3.5 points across three different retrievers' does not hold per retriever; recomputed deltas over the strongest baseline are +4.5, +3.1, +3.0
+- [social-impact-benefits-only] Mandatory social-impact section discusses only benefits; no risk of the work appears anywhere in the provided pages
+- [cultural-gold-answer-essentialism] Contested cultural norms are encoded as single deterministic gold answers, under an unjustified six-region taxonomy that lumps 'Africa and the Middle East'
+- [region-claims-single-task-resolution] Sec 2's region-level equality evidence rests on ~9-15 tasks per region; the cited 'strong gains' equal one additional correct task
+- [annotator-reporting-absent] No team size, recruitment, compensation, consent, or per-language native-speaker coverage for the expert team that built both the rubric and every evaluation query
+- [release-licensing-unaddressed] Open-source pledge covers skill pools derived from copyrighted sources, with no license or redistribution terms named anywhere in the provided material
+- [api-scorer-no-pinning] Headline numbers depend on closed API models with no version/date pinning; no open-weights scorer/solver configuration exists in the paper
+- [audit-not-rerunnable-from-main] Audit population not identifiable from the main text: only three of 'over a dozen' indexes are named, and the estimation method behind the zero-counts is deferred
+- [core-run-details-deferred] The core experiment is not re-runnable from the main text alone: prompts, decoding, checkers, task lists, the concrete dense retriever, and the Table 5 fine-tuning recipe are all in the unprovided supplementary
+
+KNOWN STRENGTHS (already recorded; do not re-report):
+- Table 3 is arithmetically airtight, down to implied integer task counts
+- The 9-setting dominance claim verifies, even under a stricter reading than the paper states
+- Fig 3 reconciles exactly with Table 3 under forensic recomputation — the figures plot real data
+- Cross-artifact coherence across figures, tables, and prose
+- Ablation claim verified and honestly framed
+- Table 5's numbers are internally honest even where the prose overreaches
+- Falsifiable experimental-design claims that could be checked, passed
+- Table 3's Avg column is fully reproducible, including a subtle case proving unrounded aggregation
+- Near-universal integer consistency of reported percentages with the stated task counts
+- Cross-figure and cross-table consistency checks all pass
+- Setup arithmetic is exact: pool compositions, depth rule, and audit total
+- Claim wording is calibrated to what the numbers actually show
+- The router corruption sweep is the one place uncertainty is quantified, and it is done properly
+- Arithmetic and cross-figure consistency survives full recomputation
+- The scorer=solver self-consistency confound is directly probed and does not explain the gains
+- The router-corruption sweep is an honest control that bounds the authors' own component
+- Skill-necessity anchor and solver-side anonymization guard against two real confounds
+- The headline comparison targets the strongest, most relevant baseline under conditions favorable to it
+- Budget sensitivity covers the deployment-relevant regime with a mechanistically coherent pattern
+- The central motivational statistic (70.1% adoption, no gain) is verified genuine and correctly attributed
+- The second motivational premise (curated skills help, self-generated can hurt) is a fair paraphrase of a verified source
+- Honest lineage disclosure and adversarial reuse of the closest competitor
+- The two-family baseline design operationalizes the positioning claim empirically
+- Contribution-bullet arithmetic verifies exactly against Table 3, including the 'first or tied-first in all 9 settings' claim
+- Two genuinely novel artifacts: the multilingual skill-supply audit and the three-layer mixed-provenance pool design
+- Release pledge with a concrete pointer covering exactly the reproduction-critical assets
+- Candidate-depth rule and pool arithmetic verified internally consistent
+- Scoring math fully specified at formula level in the main text
+- Access-dated citations pin the audit snapshot of moving-target community indexes
+- Solver blinding and skill-necessity anchors stated in the main text
+- Backbone-dependence partially hedged, including one fully open-weights downstream result
+- Double-anonymity check passed

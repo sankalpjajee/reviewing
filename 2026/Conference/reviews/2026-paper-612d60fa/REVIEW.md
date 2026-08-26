@@ -18,9 +18,10 @@ Given a retriever's candidate set, an LLM scores each candidate under two rubric
 a query-independent **Theory view** (correctness, completeness, executability,
 cross-lingual faithfulness, localization, context efficiency) and a query-grounded
 **Action view** (applicability, procedure/constraint/output match, language fit,
-misleading risk) — and a domain router combines them through one of three
-domain-specific fusion rules (convex mix for general tasks, a Theory≥65 gate for
-tool use, equal z-scored fusion for cultural tasks). The paper also contributes an
+misleading risk) — and a domain router combines these through one of three
+domain-specific fusion rules (a convex mix of Action and Theory for general tasks,
+a Theory≥65 gate for tool use, and — for cultural tasks — an equal z-scored fusion
+of Theory, Action, and the retriever's own relevance score). The paper also contributes an
 audit of ~84,700 community skill entries (finding zero in-language skill bodies for
 Swahili and Hindi), a three-domain multilingual evaluation (94 general / 265
 tool-use / 52 cultural tasks) over three-layer skill pools mixing ecological-style,
@@ -108,7 +109,14 @@ three-retriever pooling) spans **27.2 (zh) to 54.6 (hi)** in Tool-Use and **56.9
 *highest*-resource non-English languages now at the bottom. That pattern is
 consistent with inequality being *relocated* rather than narrowed; whether the
 spread shrank versus Retrieve-only cannot be determined because baseline
-per-language values are never reported as numbers.
+per-language values are never reported as numbers — and even with them, the
+per-language subsets are provably non-parallel in size and content, so
+cross-language levels and deltas are task-mix-confounded (symptomatically, levels
+anti-track the audited supply: zero-supply Hindi is the best Tool-Use language,
+best-supplied-non-English Chinese the worst in both panels, unremarked). The
+Cultural domain never states what language its 52 queries are written in, and the
+three domains use three different language rosters (en in Tool-Use, absent from
+General) without acknowledgment.
 
 Compounding this: the headline **+12.9pp/+5.6pp deltas never state their
 comparator** (vs Retrieve-only? vs Random?); "lifts the lowest-resource languages
@@ -131,7 +139,12 @@ router, the three fusion rules — adds **3+3+1 = 7 tasks out of 411** (+2.1pp m
 and the ablation runs in only one of nine settings. Meanwhile three of the six
 "strong external baselines" (DEITA, M-DaQ, JQL) are query-agnostic by design and
 lose structurally (three cultural cells below Random; one at the no-skill floor),
-so the effective comparison set is narrower than Table 3 suggests.
+so the effective comparison set is narrower than Table 3 suggests. The Theory
+view's standalone value is also worse than the ablation prose discloses:
+Theory-only trails Retrieve-only on General (−4.3pp) and Cultural (−19.2pp),
+exactly ties it on Tool-Use, and on Cultural is statistically indistinguishable
+from Random (59.6 vs 60.0) — inside the band of the query-agnostic baselines the
+paper itself calls structurally inadequate.
 
 ### W3. Per-setting superiority is statistically thin, and its defense lives in unprovided Appendix B. **[under-specified · major]**
 
@@ -154,8 +167,19 @@ bias as explanations for the gains" measures every backbone-swap margin against
 **Retrieve-only**, not the strongest baseline; SkillFlow averages ~2.8pp above
 Retrieve-only, so the +3.5 and +5.0 Fig 6 cells leave the strongest-baseline
 margin potentially under ~1–2pp in swapped configurations — re-established
-nowhere. The cultural cells (86.5–94.2%) also sit near ceiling, compressing all
-margins in that domain.
+nowhere. The same figure's pool-synthesis control moves in an unexplained
+direction: the *stronger* synthesizer lowers every cell (including the
+scorer-free Retrieve-only baseline) and roughly halves M-SQE's margin
+(+8.6/+9.0 → +3.5/+4.9), so "ruling out pool-synthesis artifacts" overstates —
+the sign survives the swap, the headline magnitude does not, and the main
+results sit at the gain-maximizing weak-synthesizer setting. Fig 6 also prints
+59.6 vs 59.5 for two Retrieve-only cells that are identical by construction —
+either a transcription error or ~1-task run nondeterminism, the paper's only
+measured noise datum, and the same size as five of the nine per-cell wins.
+Relatedly, Fig 4 shows M-SQE's own curve is non-monotone (68.2 → 67.6 → 66.4
+beyond N=3, undiscussed) while every headline table sits at Top-3 — M-SQE's
+empirical argmax, a choice justified nowhere. The cultural cells (86.5–94.2%)
+also sit near ceiling, compressing all margins in that domain.
 
 ### W4. The trajectory-generalization contribution rests on 3 net tasks of 411. **[wrong (overreach) · major]**
 
@@ -216,6 +240,27 @@ abstract's is not. Machine-checked (`abstract-at-least-3p5-*` in the audit).
   backbone (Gemini-3-Flash) unpinned; audit "Est." counts carry no stated
   detection recall; paraphrase-set authorship for checkers unstated at one-task
   margins.
+
+### W9. The scoring formalism is internally incoherent as written. **[wrong · major]** *(final-sweep finding)*
+
+By the paper's own cap arithmetic, both of its illustrative "structurally
+unusable" defects — the missing required slot and the "critical localization
+failure" of §4.4 — score Theory = min(500/6, 80) = **80 ≥ 65** and *pass* the
+Tool-Use guard that Fig 1's flagship narrative says screens them out; only a
+Correctness (red-line) violation, capped at 40, is guaranteed out. "Basic
+dimension" (the cap rule's operative class) occurs once and is never defined;
+§4.4's "language red-line" has no referent in §4.2's taxonomy, which marks only
+Correctness red-line and speaks of "the red-line dimension" in the singular. The
+Action scalar consumed by all three fusion rules and the Table 4 ablation has
+**no stated aggregation** over its six dimensions — one of which, Misleading
+risk, is inversely oriented, blocking any default reading and leaving C_func's
+"M larger than the Action range" construction unfixed. And C_cul z-scores a
+per-candidate Retrieval quantity the problem formulation never defines (the
+retriever returns a set, not scores), with no instantiation stated for the
+reimplemented SkillFlow pipeline. One path does cohere, in fairness: a red-lined
+skill (cap 40 < 65) always fails the guard. Either §4.2's cap taxonomy or
+§4.4's guard semantics must be wrong as printed — and Tool-Use is the domain
+carrying the headline Hindi/Swahili gains.
 
 ### W8. Presentation minors. **[minor]**
 
@@ -347,6 +392,26 @@ questions are answerable from existing logs plus one cheap experiment.
 audit here *passed* almost everywhere (25/27), the integrity scan was clean and
 reported as clean, and the strengths section is longer than in any prior review
 this workflow has produced because this paper earned it.
+
+**Final completeness sweep (2026-08-25).** A third pass with four orthogonal
+lenses (Sec-4 mechanics as mathematics; unaudited figures/tables; line-by-line
+prose; a meta-critic reading our own findings against the paper), each given the
+full known-findings list and a dedup-verdict verifier. Not dry: 24 raw survivors
+merged to ~13 distinct items. The material ones are folded in above — W9 is new
+in kind (formalism incoherence; the sweep's best catch), W1 gained the
+non-parallel-subsets and language-roster paragraphs, W2 gained
+Theory-only-below-anchors, W3 gained the synthesis-upgrade margin halving, the
+59.6-vs-59.5 invariance violation, and the Top-3 argmax operating-point issue.
+The sweep also filed five corrections against OUR OWN text (summary misdescribed
+the cultural fusion as two-view when it has a third input, the retriever score;
+"fusion rules fully specified" and "mechanistically coherent pattern" praise
+overstated) — all applied. The meta-critic spot-checked the existing findings:
+all survived recomputation; one sweep candidate was itself caught as a duplicate
+of W8 by the verifier. **Score unchanged: the aggregate empirical core that set
+the rating survives every new finding.** Two new strengths recorded: the
+Retrieve-only(SF)=SkillFlow-selector(SF) identity holds 3/3 (a structural
+invariant fabricated tables would likely miss), and the red-line/guard path that
+must cohere does.
 
 **Deadline-day re-evaluation (2026-08-24).** Before submission, two independent
 passes were run. (1) A fresh-eyes reviewer with no access to this review read the

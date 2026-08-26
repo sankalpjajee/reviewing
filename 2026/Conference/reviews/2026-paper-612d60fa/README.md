@@ -15,14 +15,14 @@ from the authors' existing logs plus one cheap experiment.
 | [`00-intake.md`](00-intake.md) | Stage 0 — intake record (incl. the appendices-in-supplementary caveat) |
 | [`02-claims.md`](02-claims.md) | Stage 2 — 17 claims tabled before reading results, with verdicts |
 | [`03-stats.md`](03-stats.md) | Stage 3 — numeric audit (27 checks: 25 pass) and statistical assessment |
+| [`07-final-sweep.md`](07-final-sweep.md) | Third pass: orthogonal-lens completeness sweep — delta, corrections C1–C5, synthesizer report |
 | [`artifacts/`](artifacts/) | `integrity.json`, `checks.json`, `numeric_audit.json` (extracted text not committed — confidential) |
 
 ## How this was produced
 
 Via [`../../workflow/`](../../workflow/): clean integrity gate → claims table
 before results → machine numeric audit → 5 dimension reviewers → adversarial
-verification of every finding → AC synthesis. 11 agents, ~874K tokens. **42
-findings survived** (23 confirmed, 19 weakened); 32 strengths recorded.
+verification of every finding → AC synthesis. 11 agents, ~874K tokens. **65 findings survived across three passes** (base review 42; final orthogonal-lens sweep +23); 34 strengths recorded. The sweep also corrected five statements in our own review text (see `07-final-sweep.md`).
 
 ## The shape of the verdict
 
