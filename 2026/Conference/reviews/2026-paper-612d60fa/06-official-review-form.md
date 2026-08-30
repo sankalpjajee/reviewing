@@ -87,3 +87,29 @@ Not adequately addressed in the main text, though likely addressable in revision
 
 Note on Expertise: this field describes the human reviewer's relationship to the
 topic and must be set by them, not derived from this analysis.
+
+## Comments (confidential to SPC/Chairs — optional)
+
+All quantitative claims in this review were verified by recomputation from the
+paper's own tables (all 102 deterministic cells check out against the stated task
+counts; the specific failures cited — the abstract's per-retriever margin, the
+cap/guard arithmetic in Sec. 4, the Fig. 6 invariance violation — are exact
+recomputations, not impressions). The two asks most likely to be decision-relevant
+in discussion are Q1 (a computed cross-language dispersion metric) and Q2 (a
+rubric-free LLM-rerank baseline); favorable answers to both would move me to weak
+accept.
+
+## Acknowledgement
+
+Yes — note this is the reviewer's personal attestation of AAAI's ethics policy
+and must be clicked by them.
+
+## Post Rebuttal Comment
+
+To be completed after the author response. If the form requires text at initial
+submission, use: "To be completed after the author feedback period."
+
+## Submission-time note
+
+Expertise is the reviewer's own self-assessment; Signatures/Readers are set by
+OpenReview.
