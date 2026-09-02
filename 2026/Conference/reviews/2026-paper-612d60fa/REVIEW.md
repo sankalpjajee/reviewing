@@ -170,7 +170,7 @@ margin potentially under ~1–2pp in swapped configurations — re-established
 nowhere. The same figure's pool-synthesis control moves in an unexplained
 direction: the *stronger* synthesizer lowers every cell (including the
 scorer-free Retrieve-only baseline) and roughly halves M-SQE's margin
-(+8.6/+9.0 → +3.5/+4.9), so "ruling out pool-synthesis artifacts" overstates —
+(+8.6/+9.0 → +3.5/+5.0), so "ruling out pool-synthesis artifacts" overstates —
 the sign survives the swap, the headline magnitude does not, and the main
 results sit at the gain-maximizing weak-synthesizer setting. Fig 6 also prints
 59.6 vs 59.5 for two Retrieve-only cells that are identical by construction —
