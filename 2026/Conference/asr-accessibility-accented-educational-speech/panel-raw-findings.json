@@ -1,5 +1,5 @@
-[
- {
+{
+ "methodology": {
   "lens": "methodology",
   "summary": "The paper proposes a sensible paired-transcript design (same audio, same prompts, reference vs. ASR windows, McNemar on discordant pairs) and is unusually candid about partial role separation among generator, verifier and answerer models. However, several stated controls do not control what they claim, and the design as executed cannot support several headline claims. Most seriously, the QA item set is built from \"knowledge-error keywords\" (i.e., terms an ASR system already misrecognized), so the reference-vs-ASR gap is a conditional estimate, not \"how much of the recording's knowledge remains accessible\"; the abstract's claim that QA gaps are largest for knowledge-intensive material/topics is never tested (the lower/higher knowledge-intensity labels are defined but never used); the ground-truth verification filter uses two of the three answerers on the same reference window, so the \"verified\" subset mechanically inflates reference accuracy and Cohen's h; and the L1/L2 comparison is confounded with venue/topic (NIH biomedical talks dominate the L2 group) with no speaker-level clustering or statistical test. Several text claims are contradicted by the paper's own figures (BWER is below WER for Whisper-M in every domain; Whisper-L with WER 0.197 yields higher QA accuracy than Wav2Vec2-L-s with WER 0.164; text reference accuracies of 99.3/98.3/97.9% vs. Figure 4's 95.4/94.0/93.5%). Missing controls (closed-book baseline, per-topic QA breakdown, per-model tests, ASR-window alignment procedure) and undisclosed selection rules (M3AV speakers chosen to hit a 75/25 L2/L1 split; 148 EdX videos excluded on a vague criterion) further limit internal validity.",
   "strengths": [
@@ -193,7 +193,7 @@
    }
   ]
  },
- {
+ "statistics": {
   "lens": "statistics",
   "summary": "The arithmetic that can be checked mostly checks out: every McNemar p-value in Table 3 and the open-ended test reproduces exactly as a one-sided exact binomial on the reported discordant counts, Table 4's Cohen's h values reproduce, Table 1/5/7 sums and the 75/25 L2/L1 split are correct, and Figure 2's L1/L2 WERs average to Table 2's values. However, the headline QA statistics are mislabeled and partly misreported. Table 3's \"N=1,107\" tests are in fact pooled over three QA models (3,321 item-model pairs; the 160-37=123 net discordant pairs give an 11-pt gap per model but a 3.7-pt gap pooled, which is what h=0.140 and Figure 4 imply), so the item-level independence assumption is violated and the \"for each QA model\" description is wrong. The text's reference accuracies (99.3/98.3/97.9%) contradict Figure 4's own bar labels (0.954/0.940/0.935) and reconstruct instead to the GT-verified subset. Several interpretive claims are contradicted by the paper's own numbers: BWER is lower than WER for every Whisper model and every domain, the Whisper-L/L-t bars in Figure 4 outperform Whisper-S/M despite far worse WER, the relative L1/L2 gap is the same (~40%) for the best Whisper and the worst Wav2Vec2 models, and the Table 7 L2-share difference is not significant (Fisher p=0.20). No variance, CIs, or tests are reported for any human-rating comparison, and the open-ended vs multiple-choice effect-size comparison is confounded by an 15-22 pt drop in gold-context accuracy and a 7x higher \"Away\" rate.",
   "strengths": [
@@ -395,7 +395,7 @@
    }
   ]
  },
- {
+ "asr-expert": {
   "lens": "asr-expert",
   "summary": "The ASR component of this paper is the weakest part of an otherwise interesting downstream-QA framing. The headline ASR result -- that Whisper-L and Whisper-L-t are 'substantially worse' than Whisper-S/M (Table 2: EdX WER 0.197/0.114 vs 0.074) -- is, by the authors' own admission on p.5, a long-form decoding artifact (repetition/hallucination loops), yet it is reported as model performance and propagated into the L1/L2 gap analysis (Fig 2), the human-correlation table (Table 6), and the claim that 'recent models reduce the L1/L2 accessibility gap'. No decoding protocol (library, chunking/VAD, condition-on-previous-text, compression-ratio/log-prob fallbacks, beam size) is given, and checkpoint identities are not specified (which 'large'? what is 'L-t'? which of the three wav2vec2 models is the footnoted lv60-self checkpoint?). The wav2vec2 baselines are LibriSpeech-960h read-speech CTC fine-tunes without an LM, so the 'two families' comparison mostly measures training-data domain rather than architecture or recency. The BWER metric is defined differently for the two corpora (slide-OCR biasing words for M3AV vs 'all non-function words' for EdX) and, contrary to the text, is lower than WER for every Whisper row and every Figure 3 domain, meaning non-keyword words are misrecognized at a higher rate than keywords. Text normalization, alignment for keyword scoring and window extraction, the unit of WER computation, and the reliability of EdX SRT captions as 'gold' are all under-specified in ways that materially affect the reported numbers.",
   "strengths": [
@@ -562,7 +562,7 @@
    }
   ]
  },
- {
+ "consistency": {
   "lens": "consistency",
   "summary": "The paper's numerical backbone is partly self-consistent: every p-value in Table 3 and the open-ended test reproduces exactly from the reported discordant counts, Table 4's Cohen's h values reproduce, Figure 2's L1/L2 WERs pool (25/75) to Table 2's overall WERs, and Figure 1's 94.3%/90.6%/3.7pt/p=9.9e-20 equal the 3-LLM means of Figure 4's bars and Table 3's full-set row. However, that same reconciliation exposes serious cross-reference failures: the prose reports reference QA accuracies of 99.3/98.3/97.9% that appear nowhere in Figure 1 or Figure 4 (which show ~95.4/94.0/93.5%), Table 3 is labelled N=1,107 per-item but its counts only yield the stated 3.7pt gap and h=0.14 if pooled over 3,321 item-model pairs, and the prose claims about Figure 3/Figure 4 (\"BWER exposes disparities WER understates\", \"ordering mirrors Table 2\", \"gap narrows for strongest Whisper\") are contradicted by the plotted values. Several headline claims (QA differences across topics/knowledge intensity, human study \"confirming\" QA trends) have no supporting table, and the text points to a nonexistent Table 11, a nameless \"Section\", and an Appendix that is not in the submission. The seven-ASR/three-LLM/two-dataset framing is consistent throughout, but the methodology's \"retain only verified items\" rule conflicts with the primary use of the unverified 1,107-item set.",
   "strengths": [
@@ -774,7 +774,7 @@
    }
   ]
  },
- {
+ "human-study": {
   "lens": "human-study",
   "summary": "The human study (pp. 6-7, Tables 5-7) adopts the Munro & Derwing tripartite construct (accentedness, comprehensibility, intelligibility) without citing it and without reporting the most basic design facts an applied-linguistics reviewer needs: number of raters, rater L1/dialect and accent familiarity, training, listening conditions, replays, blinding, inter-rater reliability, and IRB/consent are all absent from the main text and deferred to an appendix that is not in the submission. The L1/L2 comparison in Table 5 is severely confounded with venue/topic: 168 of 235 clips are NIH biomedical talks, the L2 row (4.3/3.4/0.34) is essentially the NIH row (4.2/3.4/0.36), and between-topic ranges (accentedness 2.3-4.6; human BWER 0.07-0.36) exceed the L1/L2 gaps (1.7 and 0.06), yet no cross-tabulation, stratification, or regression is presented. \"Intelligibility\" is operationalized as human-transcription BWER restricted to rare/technical vocabulary (and defined differently for EdX vs M3AV clips), so it measures listener domain knowledge and spelling of jargon rather than speaker intelligibility; a human BWER of 0.28 for L1 speakers is not credible as an intelligibility score. Table 6 does not state n or unit (the star pattern implies ~235 rater-averaged clips, ignoring nesting within speakers and zero-inflated clip-level ASR BWER), and Table 7 dichotomizes the outcome post hoc and reports no test (my Fisher test on the 84% vs 91% L2 proportion gives p~0.20). The headline human-study finding, that perceived accentedness correlates with ASR error, is already well documented in the very literature the paper cites, and the study never tests the paper's central construct (whether humans can recover knowledge from ASR transcripts). Finally, assigning L1/L2 status from author-name origin and affiliation for the M3AV speakers, with verification only for an unreported subset, raises both validity and ethics concerns that the paper does not address.",
   "strengths": [
@@ -945,7 +945,7 @@
    }
   ]
  },
- {
+ "llm-qa-eval": {
   "lens": "llm-qa-eval",
   "summary": "The QA pipeline (Gemini generates and grades, GPT4o+Llama3 verify and answer, Qwen2.5 answers) is described at the level of intent rather than procedure, and several of its load-bearing measurements are circular or confounded. The two verifier models are also two of the three answerers, so their reference-condition accuracy on the 813-item verified set (99.3%, 98.3%) is close to guaranteed by construction, and the McNemar 'Toward' asymmetry on that subset is partly built in. The headline open-ended result (10-14pt drop vs 2.7-4.7pt under multiple choice) is presented as 'unmasking' a hidden effect, but the reference/ASR odds ratios are essentially identical across formats (1.72 vs 1.75/1.75/2.27); the larger absolute gap is mostly a baseline shift caused by an unvalidated, strict, generator-as-judge grader that marks 16-23% of gold-context answers wrong. The question set is conditioned on ASR keyword errors (every item has a substitution/deletion type), so QA accuracy is not an estimate of 'how much knowledge remains accessible' as the abstract claims, and models still answer 90.6% of these corrupted-keyword items correctly, which questions the probe's sensitivity and the learner-proxy framing. Finally, the text's reference accuracies (99.3/98.3/97.9%) do not match Figure 4's bar labels (0.954/0.940/0.935), Table 3's N=1,107 is really 3,321 pooled model-item pairs, and no prompt text, model versions, window-alignment procedure, or option-ordering control is given, so the pipeline is not reproducible from the paper.",
   "strengths": [
@@ -1166,7 +1166,7 @@
    }
   ]
  },
- {
+ "accessibility-education": {
   "lens": "accessibility-education",
   "summary": "The paper correctly diagnoses a real problem (WER does not tell an institution whether a transcript conveys a lesson) and builds a defensible ASR-to-LLM robustness benchmark on real educational recordings. However, what it measures is how well three LLMs answer keyword-anchored multiple-choice questions from a \u00b1100-word transcript window, and it never connects that measurement to any Deaf/hard-of-hearing, multilingual, or other human learner; the abstract explicitly redefines accessibility as a transcript's \"potential for use in LLM-driven downstream tasks.\" The central equity claim in the title and conclusion (that accented instructors' lessons become less usable) is never tested: QA accuracy is reported pooled across speakers, with no L1/L2 split anywhere in Figure 4 or Tables 3-4, and the only speaker-group-to-QA link (Table 7, 84% vs 91% L2) is untested and non-significant on reconstructed counts. The \"human study\" is of hearing listeners rating accent from audio, the inverse of the population the paper claims to serve, and cannot validate the proxy. Effect sizes are small by the paper's own reporting (2.7-4.7pt multiple-choice drop with the best ASR, Cohen's h 0.14-0.19), the reference accuracy is reported as three different numbers, and the paper offers institutions no actionable guidance despite the unsourced \"99% accuracy\" policy hook and the fact that every system tested fails that bar. The limitations section is candid, but the title, abstract, and conclusion do not carry that candor.",
   "strengths": [
@@ -1316,7 +1316,7 @@
    }
   ]
  },
- {
+ "novelty-related-work": {
   "lens": "novelty-related-work",
   "summary": "The paper's actual novelty is the intersection: applying an LLM-QA probe to real ASR output on accented (L1/L2-labelled) educational recordings, with BWER-style keyword error analysis and a human accentedness study alongside. Each component, however, has a substantial prior literature that the one-column Related Work (p.7) does not engage: task-/QA-based evaluation of lecture transcripts (Munteanu et al. 2006; Favre et al. 2013), spoken-QA-under-ASR-noise benchmarks (Spoken SQuAD, ODSQA, SLUE, ASR-GLUE), question-generation-based consistency evaluation (QAGS/FEQA/QuestEval and especially MQAG, which is essentially the same MCQ generate-then-answer design), semantic alternatives to WER (SemDist), DHH caption-usability metrics (Kafle & Huenerfauth), Whisper hallucination and accent-bias studies (Koenecke et al. 2024; Sanabria et al. 2023), and the Munro & Derwing paradigm that the human study reproduces without attribution. Consequently the two central gap statements (\"the quality of transcripts as inputs to the downstream LLMs is underexplored\", p.1; \"A task-based evaluation is needed\", p.7) and the framing of the first contribution bullet are overstated, and several findings presented as new or \"counter-intuitive\" (MCQ format understating the gap; Whisper-L hallucination) are known phenomena. There are also concrete citation problems (BWER attributed to the M3AV paper rather than the contextual-biasing literature; intro cites for \"LLMs producing transcripts\" that do not support the claim). The empirical study remains a useful, well-motivated data point, but the paper needs a substantially rewritten Related Work and a more modest, precise statement of what is new.",
   "strengths": [
@@ -1500,7 +1500,7 @@
    }
   ]
  },
- {
+ "ethics-reproducibility": {
   "lens": "ethics-reproducibility",
   "summary": "From an ethics and reproducibility standpoint the paper is substantially under-documented for a study whose central independent variable is an inferred, sensitive personal attribute (L1/L2 status) of identifiable people. The L1/L2 labels are produced by per-person \"biographical research\" on 27 named EdX instructors and by name-origin/affiliation guessing (verified only \"for a subset\") for M3AV academics, with no operational definition of L2, no consent, no IRB/ethics statement, and a stated intent to ship the datasets \"enriched with speakers' demographics\". The human-listener study (one of three claimed contributions) is reported with no rater count, recruitment, compensation, consent, scale anchors, or ethics approval; everything is deferred to an appendix that is not in the submission, along with \"Table 11\" and the prompts. Reproducibility is further weakened by unspecified checkpoints (Whisper-L v1/v2/v3? \"L-t\"?), unspecified long-form decoding settings that directly determine the headline Whisper-L \"hallucination\" result, undated GPT-4o and unnamed Gemini versions, no seeds or repeats, no hardware, no code/data/question-set release, and several internal inconsistencies about which M3AV recordings were retained. The Limitations section covers proxy validity and correlation-vs-causation reasonably, but omits privacy, consent, licensing, dual-use, label noise, and compute.",
   "strengths": [
@@ -1676,7 +1676,7 @@
    }
   ]
  },
- {
+ "writing-presentation": {
   "lens": "writing-presentation",
   "summary": "The paper is readable and mostly well organized, with a clear RQ1-RQ3 framing, a complete reference list, and statistics that reproduce from the tabulated counts. However, presentation defects are numerous and several are substantive: the body text reports reference-condition QA accuracies (99.3/98.3/97.9%) that contradict the numbers printed on Figure 4's bars (0.954/0.940/0.935) and Figure 1's summary (94.3%); the text claims BWER exposes harder technical-vocabulary failures while Figure 3 and Table 2 show BWER below WER for every Whisper system; and the abstract/conclusion assert per-topic QA differences that no table or figure reports. The manuscript is not self-contained: it points to a non-existent \"Table 11\", an empty \"see Section for details\" reference, and five appendix pointers (including the entire human-study design) with no appendix supplied. Figure 4 uses a truncated y-axis, unreadable rotated labels, and a family-only legend that makes its \"mirrors Table 2\" claim unverifiable; Table 3's N is ambiguous about pooling across LLMs; Table 6's caption says \"accuracy\" for what are error correlations with undefined significance stars. Terminology (Wav2Vec2/Wav2Vec, GPT4o/gpt4o, \"two-stage\" meaning two different pairs of stages), undefined abbreviations (Whisper-L-t, Wav2Vec2-L-s, BWER formula, \"fragmentation/gluing heuristic\"), a bullet-list formatting failure, and an \"Ethical Concerns\" heading with no ethical content all need fixing.",
   "strengths": [
@@ -1933,5 +1933,367 @@
     "suggested_fix": "Report insertion rates or the fraction of segments with repetition loops per system, or include an example transcript excerpt."
    }
   ]
+ },
+ "advocate": {
+  "lens": "advocate",
+  "summary": "This paper addresses a timely and under-examined gap: institutions treat ASR transcripts as accessibility infrastructure (and write 99%-accuracy policies around WER), yet no standard metric asks whether a learner can still recover the lesson's knowledge from the transcript, especially for L2 instructors. The two-stage framework (ASR, then knowledge-centered QA over reference vs. ASR windows) is designed with unusual care: questions are generated from the reference rather than the ASR output, both generation and answering use a bounded \u00b1100-word window, a programmatic leak filter rejects items whose stem or options contain the target keyword or its mishearing, spelling/inflectional variants are excluded, decoding is deterministic, and paired McNemar exact tests are reported alongside Cohen's h with the effect honestly labeled 'small'. I independently recomputed every p-value in Table 3 and the open-ended test, all three Cohen's h in Table 4, and the pooled 3.7-point gap in Figure 1, and every one reproduces from the reported counts; Table 1, Table 5 and Table 7 totals are also internally consistent. The results are interesting even to a skeptic: larger Whisper checkpoints do far worse than Whisper-S/M (EdX WER 0.197 vs 0.074), BWER exposes term corruption that WER hides (Wav2Vec2-B on M3AV: WER 0.274, BWER 0.402), L2 speakers show higher WER under all seven systems with no reversal, and the open-ended robustness check reveals that the multiple-choice format was masking roughly two-thirds of the effect (drop grows from 2.7\u20134.7 pt to 10.3\u201314.0 pt; h from 0.14\u20130.19 to 0.24\u20130.34). The human study (n=235 clips) triangulates the machine results and adds the nuanced observation that Whisper transcribes more accurately than human listeners yet remains significantly correlated with perceived accentedness. The remaining risks to acceptance are presentation-level and easily fixed: a text/figure mismatch on reference accuracies, an ambiguous pooling convention in Table 3, several claims deferred to an appendix that is not in the submission, and a few over-broad sentences that the authors' own figures do not support.",
+  "strengths": [
+   "Problem framing is sharp and consequential (p.1 Introduction): 'the availability of text is often mistaken for the accessibility of knowledge', tied to concrete policy stakes ('many institutions have developed policies that demand 99% accuracy of transcribed speech') and to who is harmed (learners who cannot access audio; L2 instructors whose lessons become less searchable). The title-level thesis, that WER measures surface fidelity rather than knowledge recovery, is one that accessibility offices, ed-tech platforms and ASR researchers all need and do not currently have a metric for.",
+   "Question generation is deliberately contamination-resistant (p.3 'Question Construction'): 'Generation uses the reference transcript rather than an ASR output. This prevents recognition errors from contaminating the answer key.' Both the generator and the answerers see only 'a \u00b1100-word window of surrounding context', explicitly to stop items being answerable 'from unrelated redundant context elsewhere in the recording'. This is more careful than the common practice of generating questions from whatever transcript is at hand.",
+   "Three-layer item validation with a genuine leak filter (p.3-4): a dependency check ('distractors must be indistinguishable ... to a reader without access to the local window'), a programmatic specificity check that rejects 'any question whose stem or options contain the literal target keyword, its ASR-mishearing, or an obvious variant of either', and a post-hoc answerability check by two judges (GPT4o, Llama3) 'that never generate questions'. The filter for spelling/inflectional variants ('radiance/radians, British/American spelling pairs') ensures only genuine concept changes are counted as knowledge errors.",
+   "Unusually honest about the limits of its own role separation, stated twice (p.4 Methodology and p.4 Experiment Settings): 'role separation is guaranteed against the generator but not fully among verifier and answerer roles'. Authors who volunteer this caveat rather than hoping reviewers miss it are signaling trustworthy reporting.",
+   "Controlled experimental hygiene (p.2 and p.4 'Prompt and Temperature'): 'Each ASR system receives the same audio. Each QA model receives the same prompts, questions, and transcript contexts. Decoding is deterministic where supported, and no QA model is permitted to browse the web'; 'temperature 0 for QA and ground-truth verification, and temperature 0.3 for question generation'; 'Conversation history is cleared between items'; max tokens matched within each item. These are the details that make the reference-vs-ASR comparison a clean paired design.",
+   "Statistics are the right ones and they reproduce. McNemar's exact test on discordant pairs is exactly appropriate for paired binary outcomes on identical items, and Cohen's h is reported 'as an effect-size measure independent of sample size' (p.4). I recomputed all seven p-values in Table 3 and the open-ended test (e.g., toward=160, away=37 gives 9.94e-20, reported 9.9e-20; toward=14, away=6 gives 5.77e-2, reported 5.8e-2; toward=140, away=33 gives 3.43e-17, reported 3.4e-17) and all three Cohen's h values in Table 4 (0.240, 0.252, 0.338 vs reported 0.240, 0.253, 0.338); every one matches. The pooled gap in Figure 1 ('Accuracy Gap = 3.7 percentage points', 94.3% vs 90.6%) equals (160-37)/(3x1107) = 0.037 exactly, and h computed from the Figure 4 bars (0.943 vs 0.906) is 0.142 vs the reported 0.140.",
+   "Honest interpretation of effect size against significance (p.5-6): 'h = 0.140 on the full set and h = 0.190 on the ground-truth-verified subset, both in the conventionally \"small\" range ... the reference-vs-ASR accuracy gap is highly statistically robust but modest in absolute size under the multiple-choice format'. The paper also reports that deletion errors 'fall just short of significance in the smaller verified subset' (p=5.8e-2) rather than hiding it. This is the opposite of p-value hunting.",
+   "The open-ended robustness check is the paper's best move and it revealed a masked effect (p.4 'Open-Ended Question Variant', p.6 Table 4): the same stems and windows are reused with options withheld, isolating answer format from item content; grading is adversarial ('correct only if it clearly commits to the reference fact in a way that is distinguishable from the multiple-choice distractors'). The drop grows from 2.7-4.7 pt to 10.3-14.0 pt and h from 0.14-0.19 to 0.24-0.34 with toward=140/away=33 (p=3.4e-17). The authors correctly infer that 'a QA LLM can sometimes eliminate distractors using its internal comprehensive capability without needing the gold reference' and that 'the multiple-choice format was masking part of the true effect'. This is a methodologically important finding for anyone using MC-QA to evaluate transcript quality.",
+   "ASR results are interesting in their own right. (a) Bigger is not better: Table 2 shows Whisper-L WER 0.197 (EdX) / 0.168 (M3AV) vs Whisper-M 0.074 / 0.077, and Whisper-L-t 0.114 / 0.081, with the diagnosis 'driven by hallucination and repetition failures on long lecture audio' (p.5), a practically important caution for anyone defaulting to the largest checkpoint for lecture captioning. (b) BWER exposes what WER hides: Wav2Vec2-B on M3AV has WER 0.274 but BWER 0.402; Wav2Vec2-L 0.240 vs 0.367; Wav2Vec2-L-s 0.174 vs 0.252 (Table 2), backing the claim that 'Some transcripts achieve comparatively low overall error while substituting several central terms'.",
+   "L1/L2 disparity is consistent across every system with no reversal (Figure 2, p.5; bar labels): L1/L2 WER = 0.058/0.081 (Whisper-S), 0.056/0.080 (Whisper-M), 0.086/0.119 (Whisper-L-t), 0.133/0.214 (Whisper-L), 0.196/0.275 (Wav2Vec2-B), 0.171/0.238 (Wav2Vec2-L), 0.135/0.174 (Wav2Vec2-L-s). The inference that the disparity 'is a property of the recordings and speakers rather than an artifact of any one ASR system's training distribution' is well supported by seven-for-seven agreement across two architectures.",
+   "Domain analysis supports the knowledge-intensity thesis (Figure 3, p.5): Whisper-M BWER is highest for EdX Engineering (0.074), EdX Computer Science (0.072) and M3AV NIH (0.061) and lowest for Humanities/Science/Social Sciences (0.043-0.047) and MLS/IPP (0.035-0.039), matching the text's claim that technical-vocabulary failures concentrate in Engineering, CS and biomedical recordings.",
+   "Downstream QA loss tracks transcript quality rather than being a fixed penalty (Figure 4, p.5; bar labels): for every QA model the Wav2Vec2-conditioned bars (0.896-0.906 GPT4o; 0.833-0.866 Llama3; 0.841-0.869 Qwen2.5) sit below all Whisper-conditioned bars (0.926-0.945; 0.892-0.919; 0.899-0.921), mirroring Table 2's ASR ordering. Showing this across three LLM families (commercial GPT4o, open Llama3 and Qwen2.5) makes the conclusion hard to attribute to one model's quirks.",
+   "Human study triangulates the machine results with a reasonably sized sample (Table 5: n=235 clips, 39 L1 / 196 L2): L2 accentedness 4.3 vs 2.6, comprehensibility 3.4 vs 2.3, human BWER 0.34 vs 0.28. Table 6 shows accentedness correlates significantly with all seven ASR systems, and the pattern is informative: weaker for Whisper (rs 0.148-0.270) than Wav2Vec2 (0.327-0.453). The nuanced observation that 'ASR models had numerous instances of 0 BWER, whereas human listeners rarely had zero' so 'these models outperform human listeners in transcription accuracy, but are also significantly correlated to speaker accentedness' (p.6-7) is exactly the kind of finding a skeptic should find persuasive. Table 7 closes the loop: clips with imperfect QA have 91% L2 vs 84%, accentedness 4.3 vs 3.8, BWER 0.37 vs 0.32.",
+   "Data curation and labeling are more rigorous than typical for ASR fairness work (p.2-3): reference transcripts 'are not produced by the authors' but come from EdX captions and M3AV's human-corrected annotation; L1/L2 status 'is established through biographical research rather than assumed from name or accent alone', with all 27 EdX instructors individually researched and M3AV speakers verified via OpenAlex; unresolvable speakers are 'coded as unknown and excluded' (16 of 228 NIH). Exclusion criteria are explicit (148 EdX recordings). The two corpora are deliberately composition-matched: Table 1 gives L2 shares of 1037/1380 = 75.1% and 92/123 = 74.8% against the stated 75%/25% target.",
+   "Internal consistency of reported numbers is high: Table 1 rows sum correctly (343+1037=1380; 31+92=123); Table 5 totals to 235 both by speaker group (39+196) and by topic (38 EdX + 197 M3AV); Table 7 rows sum to the stated 194 clips; Table 4 drops equal ref minus asr to the decimal. This is a paper whose numbers can be checked and pass.",
+   "The Limitations section (p.7) is substantive rather than boilerplate: 'QA LLMs are proxies for text use, not models of disabled learners'; closed-form questions 'capture factual accessibility more directly than interpretive learning'; no visual channel; listener-sample dependence of accentedness ratings; 'Correlation cannot establish that perceived accent alone causes ASR errors'; and 'QA models may rely on pretrained knowledge even when instructed to use only the transcript'. The proposed future work (human learner studies, counterfactual transcript editing, controlled same-content recordings across varieties) is exactly what a critic would ask for.",
+   "The framework is model-agnostic and immediately usable: any ASR system can be dropped into stage 1 and any LLM into stage 2, so accessibility offices could re-run it when procuring captioning vendors, platform teams could use it for regression testing, and fairness researchers gain a knowledge-level complement to WER/BWER. The enriched dataset (demographics plus 1,107 knowledge-centered questions across 1,355 recordings, both MC and open-ended forms) is itself a reusable contribution."
+  ],
+  "findings": [
+   {
+    "title": "Reference-condition accuracies in the text do not match Figure 4 or Figure 1",
+    "category": "consistency",
+    "severity": "minor",
+    "location": "Page 5, 'QA Accuracy over ASR Transcriptions' paragraph vs. Figure 4 (page 5) and Figure 1 (page 2)",
+    "description": "The text reports reference accuracies of 99.3% (GPT4o), 98.3% (Llama3) and 97.9% (Qwen2.5), but the reference bars in Figure 4 are labeled 0.954, 0.940 and 0.935, and Figure 1 shows 'Reference (Correct) 94.3%'. The 99.x% values almost certainly come from the ground-truth-verified subset (which by construction is near ceiling on the reference) while the figure is over the full 1,107-item set. A hostile reader will read this as an error. Simply state which question set each number refers to.",
+    "evidence": "Text: 'GPT4o is strongest in the reference case (99.3%), while Llama3 (98.3%) and Qwen2.5 (97.9%)'. Figure 4 bar labels: ref 0.954 / 0.940 / 0.935. Figure 1: 'Reference (Correct) 94.3%', 'ASR (Whisper) 90.6%', 'Accuracy Gap = 3.7 percentage points'.",
+    "suggested_fix": "Either quote the full-set reference accuracies (95.4/94.0/93.5%) in the text to match Figure 4, or label the 99.3/98.3/97.9 numbers explicitly as the GT-verified subset and cite the appendix table."
+   },
+   {
+    "title": "Table 3 pools discordant pairs across the three QA LLMs but is labeled N=1,107",
+    "category": "clarity",
+    "severity": "question",
+    "location": "Page 5, Table 3 and caption",
+    "description": "The caption says 'for all QA LLMs' and the rows say 'Full (N=1,107)', but the counts only make sense if pooled over the three LLMs: (160-37)/(3x1,107) = 3.7 pt equals the Figure 1 gap and the average Figure 4 Whisper-M drop, and h computed from pooled Figure 4 bars (0.943 vs 0.906) is 0.142, matching the reported 0.140. Per-model discordant counts would also let readers see whether the effect holds for each LLM individually, which Table 4 already does for the open-ended variant.",
+    "evidence": "Table 3: 'Full (N=1,107) All 160 37 9.9e-20 0.140'; Figure 1: 'Accuracy Gap = 3.7 percentage points'; my computation: (160-37)/3321 = 0.037, (160-37)/1107 = 0.111.",
+    "suggested_fix": "State in the caption that counts are pooled over the three QA LLMs (3,321 paired responses) and, space permitting, add a per-model breakdown (three extra rows)."
+   },
+   {
+    "title": "Key comparisons and human-study design depend on an appendix that is not in the submission",
+    "category": "completeness",
+    "severity": "minor",
+    "location": "Page 6 ('QA over Open-Ended Questions', 'Human Study of Perceived Accented Speech'); page 5 ('We further report the accuracies from the verified question subset in the Appendix'); page 6 '(see Section for details)'",
+    "description": "The headline open-ended comparison cites '2.7 to 4.7 pt in Table 11', the GT-verified accuracies and the tests over all ASR systems are deferred to the Appendix, and the human study says 'More design and quality control can be found in the Appendix', yet the file contains only pages 1-9 with no appendix. There is also a broken cross-reference '(see Section for details)'. Since the reviewer cannot see Table 11, the 2.7-4.7 pt figure is unverifiable from the paper alone (Figure 4 bar labels give Whisper-M drops of 2.8, 4.8 and 3.6 pt, so it is plausible).",
+    "evidence": "'10.3 to 14.0 percentage points (pt) versus 2.7 to 4.7 pt in Table 11'; 'grade each answer adversarially ... (see Section for details)'; 'More design and quality control can be found in the Appendix.'",
+    "suggested_fix": "Include the appendix with the submission (or as supplementary material), fix the empty Section reference, and put the 2.7-4.7 pt per-model MC drops for Whisper-M directly into the main text or Table 4 so the comparison is self-contained."
+   },
+   {
+    "title": "Sentence claiming technical vocabulary is harder than function words is not supported by Figure 3",
+    "category": "claim-evidence alignment",
+    "severity": "minor",
+    "location": "Page 5, discussion of Figure 3",
+    "description": "The text says 'topic-specific vocabulary presents a greater challenge than surrounding function words', but in Figure 3 Whisper-M's BWER is less than or equal to WER in all eight domains (e.g., IPP WER 0.067 vs BWER 0.039; NIH 0.083 vs 0.061; CS 0.081 vs 0.072). Because EdX BWER is 'all non-function words', BWER below WER implies function words have the higher error rate for Whisper-M. The BWER-exceeds-WER pattern that does support the claim appears only for the Wav2Vec2 systems on M3AV in Table 2 (e.g., Wav2Vec2-B WER 0.274 vs BWER 0.402). The domain-ranking claim in the same paragraph (Engineering, CS, NIH highest) is fully supported.",
+    "evidence": "Figure 3 bar labels (WER/BWER): CS 0.081/0.072, Eng 0.093/0.074, Hum 0.047/0.047, Sci 0.044/0.043, SocSci 0.046/0.046, IPP 0.067/0.039, MLS 0.056/0.035, NIH 0.083/0.061. Text: 'We observe that topic-specific vocabulary presents a greater challenge than surrounding function words.'",
+    "suggested_fix": "Rephrase to what the figures show: technical-vocabulary error concentrates in Engineering/CS/NIH, and BWER exceeds WER for the Wav2Vec2 family (Table 2), while for Whisper-M the two are comparable. Alternatively, report BWER restricted to the triaged knowledge keywords, which is the quantity the argument actually needs."
+   },
+   {
+    "title": "'Narrowing gap' claim holds in absolute but not relative terms",
+    "category": "interpretation",
+    "severity": "minor",
+    "location": "Page 5, Figure 2 discussion",
+    "description": "Figure 2 supports a narrowing absolute L1/L2 gap for the best Whisper models (0.023-0.024 vs 0.079 for Wav2Vec2-B), but the L2/L1 WER ratio is about 1.4 for Whisper-S (0.081/0.058), Whisper-M (0.080/0.056) and Wav2Vec2-B (0.275/0.196) alike, and 1.61 for Whisper-L. The sentence 'This suggests recent models reduce the L1/L2 accessibility gap' would be more defensible if stated as an absolute-gap claim, since a skeptic will compute the ratio.",
+    "evidence": "Figure 2 bar labels: Whisper-S 0.058/0.081, Whisper-M 0.056/0.080, Whisper-L 0.133/0.214, Wav2Vec2-B 0.196/0.275. Ratios computed: 1.40, 1.43, 1.61, 1.40.",
+    "suggested_fix": "Say 'reduce the absolute L1/L2 gap' and note that the relative penalty (~40%) is roughly constant across systems; this is itself an interesting observation about where the disparity comes from."
+   },
+   {
+    "title": "Essential human-study parameters are missing from the main text; Table 6 caption says 'accuracy' but reports correlations with error rate",
+    "category": "reporting",
+    "severity": "minor",
+    "location": "Page 6, 'Human Study of Perceived Accented Speech', Tables 5 and 6; page 7 Table 7",
+    "description": "The human study is one of three stated contributions, yet the main text never gives the number of raters, their language background, how many raters per clip, or the clip length (only inferable from 'content delivered in 25 words or less' on p.7). The 9-point scale direction for comprehensibility must be inferred from the text ('comprehensibility was also higher (i.e., raters identified L2 speech as more challenging to understand)'). Table 6 is captioned 'Correlation study of human ratings and ASR accuracy' and the text says correlations 'with ASR accuracy', but positive correlations between accentedness and ASR performance only make sense if the ASR variable is BWER (error), as the preceding sentence ('Spearman correlations of BWER') indicates.",
+    "evidence": "Table 6 caption: 'Correlation study of human ratings and ASR accuracy.' Text: 'Spearman correlations were conducted with ASR accuracy on the clips.' Table 5 caption gives scales but not direction; no rater count anywhere in pages 1-9.",
+    "suggested_fix": "Add one or two sentences with rater count, background, raters per clip and clip duration; state '1 = no accent / easy, 9 = heavy accent / hard' in the Table 5 caption; retitle Table 6 as correlations with ASR BWER."
+   },
+   {
+    "title": "Hallucination/repetition explanation for Whisper-L is asserted but not quantified",
+    "category": "evidence",
+    "severity": "question",
+    "location": "Page 5, 'ASR Errors Across Speakers and Domains'",
+    "description": "The counter-intuitive and practically important finding that Whisper-L/L-t are much worse than Whisper-S/M is explained by 'Inspection of individual transcripts shows this is driven by hallucination and repetition failures on long lecture audio rather than a genuine capability deficit.' Because this is one of the paper's most quotable results, it would be protected by a single number: the insertion rate (already computed, since 'Errors are categorized as substitutions, deletions, and insertions'), or the fraction of recordings with runaway repetition, for Whisper-L vs Whisper-M. Also, 'Whisper-L-t' is never expanded (turbo?).",
+    "evidence": "Table 2: Whisper-L EdX WER 0.197, CER 0.148 vs Whisper-M 0.074, 0.038; text: 'driven by hallucination and repetition failures on long lecture audio'.",
+    "suggested_fix": "Add insertion rates per system (or the share of Whisper-L WER attributable to insertions) to Table 2 or a footnote, and expand the Whisper-L-t abbreviation on first use."
+   },
+   {
+    "title": "Abstract and Conclusion claim QA differences 'across recording topics' and 'substantial differences among QA LLMs' that the main text does not show",
+    "category": "claim-evidence alignment",
+    "severity": "minor",
+    "location": "Page 1 Abstract; page 7 'Conclusions and Future Work'",
+    "description": "The Abstract says results 'show substantial differences among QA LLMs and across recording topics, with the largest performance gaps occurring in knowledge-intensive material', and the Conclusion says 'downstream QA models differ substantially across topics'. The main text has ASR error by topic (Figure 3) but no QA-accuracy-by-topic table, and the three QA LLMs are within about 2 points of each other in the reference condition (Figure 4: 0.954/0.940/0.935). The evidence that is actually presented (format effect, ASR-family effect, L1/L2 effect) is stronger than the summary suggests, so the mismatch is an unnecessary vulnerability.",
+    "evidence": "Abstract: 'substantial differences among QA LLMs and across recording topics'; Conclusion: 'downstream QA models differ substantially across topics'; Figure 4 reference bars 0.954, 0.940, 0.935; no QA-by-topic table in pages 1-9.",
+    "suggested_fix": "Either add a compact QA-accuracy-by-topic table (main text or appendix, with a pointer) or rewrite the abstract/conclusion to emphasize what is shown: the effect is robust across three LLM families, scales with ASR quality, and is largely masked by multiple-choice format."
+   },
+   {
+    "title": "No statement about releasing the questions, keyword lists, demographic labels or code",
+    "category": "reproducibility",
+    "severity": "question",
+    "location": "Page 2 contributions list; page 7 Conclusions",
+    "description": "The first two contributions are 'An assessment framework ... that can be easily extended' and 'two datasets with real-world educational recordings that have been cleaned and enriched with speakers' demographics and knowledge-centered questions'. The value of both to accessibility offices, platform teams and fairness researchers depends on release, and Gemini-generated questions plus per-instructor L1/L2 labels are not reconstructible from the paper. A one-line release commitment (with care for the instructor-level demographic labels) would materially strengthen the contribution.",
+    "evidence": "'An empirical evaluation over two datasets with real-world educational recordings that have been cleaned and enriched with speakers' demographics and knowledge-centered questions with both closed- and open-ended forms.' No release or availability statement appears in pages 1-9.",
+    "suggested_fix": "Add an availability statement covering question sets, keyword lists, prompts, normalization code and (aggregated or consented) demographic labels."
+   },
+   {
+    "title": "Minor wording slips that could confuse a careful reader",
+    "category": "presentation",
+    "severity": "minor",
+    "location": "Page 7, Table 7 discussion; page 3 'Knowledge-Centered Question Generation'",
+    "description": "On page 7, 'the QA LLMs were only able to generate questions for 194 of the clip samples' attributes generation to the QA LLMs, but the pipeline states that Gemini generates questions and the QA LLMs only answer. On page 3, the sentence 'Surviving candidates are triaged by an LLM judge, and the same commercial model used for question generation to keep separate from the three QA answering models for alignment quality and topic centrality' is grammatically tangled and it is unclear whether the triage judge is Gemini or a distinct model.",
+    "evidence": "'given the small amount of content delivered in 25 words or less, the QA LLMs were only able to generate questions for 194 of the clip samples'; 'Surviving candidates are triaged by an LLM judge, and the same commercial model used for question generation to keep separate from the three QA answering models for alignment quality and topic centrality.'",
+    "suggested_fix": "Replace 'the QA LLMs were only able to generate' with 'the question generator could only produce', and rewrite the triage sentence to name the judge model explicitly."
+   }
+  ]
+ },
+ "skeptic": {
+  "lens": "skeptic",
+  "summary": "The paper's framework (paired reference/ASR QA with McNemar + Cohen's h) is sensible, but the headline claims run well ahead of the evidence. Several central sentences are contradicted by the paper's own figures: the QA reference accuracies quoted in the text (99.3/98.3/97.9%) do not match Figure 4 (95.4/94.0/93.5%) or Figure 1 (94.3%); the claim that technical vocabulary is harder than function words is contradicted by Figure 3, where BWER <= WER in all eight domains; and \"recent models reduce the L1/L2 gap\" holds only in absolute terms because the relative L2/L1 ratio is ~1.4 for essentially every system. The abstract's and conclusion's per-topic QA claim (\"largest gaps in knowledge-intensive material\", \"QA models differ substantially across topics\") has no supporting result anywhere in the paper, and the title's thesis (accent -> lesson missing) is never tested because QA accuracy is never broken down by L1/L2. The human study \"confirmation\" rests on an untested two-group comparison (Table 7) whose L2-proportion difference is not significant when reconstructed (Fisher p~0.20), and the \"highly robust\" p-values appear to pool three models' answers to the same items as independent pairs. Finally, the question set is by construction restricted to keywords the ASR already mis-transcribed, so the QA accuracy does not estimate \"how much of the recording's knowledge remains accessible\" as the abstract states.",
+  "strengths": [
+   "Paired reference-vs-ASR design with McNemar's exact test and Cohen's h, and the authors candidly state the multiple-choice effect is 'modest in absolute size' (p.6).",
+   "Open-ended follow-up (Table 4) is a reasonable attempt to address ceiling effects in the multiple-choice format, and the effect direction is consistent across all three QA models.",
+   "Generator (Gemini) is kept separate from the answerers, and the paper is explicit that verifier/answerer roles are not fully independent (p.4).",
+   "Two corpora, seven ASR checkpoints across two families, and three QA LLMs give the ASR-level findings (Table 2, Figure 2) reasonable breadth; the L2 > L1 WER ordering in Figure 2 is consistent across all seven systems.",
+   "Limitations section is honest about QA LLMs being proxies, possible reliance on pretrained knowledge, and correlation vs causation for accent ratings."
+  ],
+  "findings": [
+   {
+    "title": "QA reference accuracies stated in text contradict Figure 4 and Figure 1",
+    "category": "claims-vs-evidence",
+    "severity": "critical",
+    "location": "Page 5, 'QA Accuracy over ASR Transcriptions' first paragraph; Figure 4 (page 5); Figure 1 bottom panel (page 2); Table 3 (page 5)",
+    "description": "The text says GPT4o reaches 99.3% in the reference condition, Llama3 98.3%, Qwen2.5 97.9%, and presents these as what 'Figure 4 shows'. The bar labels in Figure 4 read 0.954 (GPT4o), 0.940 (Llama3) and 0.935 (Qwen2.5). Figure 1 shows 'Reference (Correct) 94.3%, ASR (Whisper) 90.6%, Accuracy Gap = 3.7 percentage points', which equals the mean of the Figure 4 reference bars. Cohen's h reported in Table 3 (0.140) reproduces from 94.3 -> 90.6 (h = 0.141), not from a 99.3% baseline (h would be ~0.47-0.53 for the same 11-point net discordance). The 99.3/98.3/97.9 numbers (mean 98.5%) instead reproduce the GT-verified row's h = 0.190 with its 3.2-pt pooled drop, i.e. they appear to belong to the verified-subset result deferred to the missing Appendix. Either the text or the figure is wrong, and the reader cannot tell which analysis the prose is describing.",
+    "evidence": "Text: 'GPT4o is strongest in the reference case (99.3%), while Llama3 (98.3%) and Qwen2.5 (97.9%)'. Figure 4 bar labels: 0.954, 0.940, 0.935. Figure 1: '94.3%' vs '90.6%', 'Accuracy Gap = 3.7 percentage points'. Table 3: Full N=1,107 Toward 160 Away 37 h=0.140; (160-37)/(3*1107)=0.037; h(0.943,0.906)=0.141.",
+    "suggested_fix": "State which question set (full vs GT-verified) each number comes from, make the prose match Figure 4, and include the verified-subset table in the main paper rather than the appendix."
+   },
+   {
+    "title": "Per-topic / knowledge-intensity QA claims have no supporting result",
+    "category": "unsupported-claim",
+    "severity": "critical",
+    "location": "Abstract (page 1); Conclusions (page 7); Methodology 'Recording Corpus' paragraph (page 2); Figure 3 (page 5)",
+    "description": "The abstract claims 'substantial differences ... across recording topics, with the largest performance gaps occurring in knowledge-intensive material', and the conclusion claims 'downstream QA models differ substantially across topics'. No QA result is ever broken down by topic or by the lower/higher knowledge-intensity classification described in the Methodology. Figure 3 is a Whisper-M ASR error plot (CER/WER/BWER by domain) and contains no QA numbers; Figure 4, Table 3 and Table 4 are aggregated over all topics. The knowledge-intensity segment classification introduced on page 2 is never used in any reported analysis.",
+    "evidence": "Abstract: 'The results show substantial differences among QA LLMs and across recording topics, with the largest performance gaps occurring in knowledge-intensive material.' Conclusion: 'downstream QA models differ substantially across topics.' Figure 3 caption: 'Performance of Whisper-M by domain/topics' (y-axis 'Error rate', series CER/WER/BWER). Methodology: 'segments are classified as lower or higher in knowledge intensity' - never referenced again.",
+    "suggested_fix": "Either add a QA accuracy / QA drop table by topic and by knowledge-intensity class (with tests), or remove the claim from the abstract and conclusion."
+   },
+   {
+    "title": "Claim that technical vocabulary is harder than function words is contradicted by Figure 3 and Table 2",
+    "category": "evidence-contradicts-claim",
+    "severity": "critical",
+    "location": "Page 5, 'ASR Errors Across Speakers and Domains' (sentences on BWER and Figure 3); Figure 3 (page 5); Table 2 (page 4)",
+    "description": "The paper asserts 'BWER exposes disparities that WER understates' and, from Figure 3, 'topic-specific vocabulary presents a greater challenge than surrounding function words'. For Whisper-M (the model in Figure 3), BWER is lower than or equal to WER in every one of the eight domains (CS 0.072 vs 0.081; Engineering 0.074 vs 0.093; Humanities 0.047 vs 0.047; Science 0.043 vs 0.044; Social Sciences 0.046 vs 0.046; IPP 0.039 vs 0.067; MLS 0.035 vs 0.056; NIH 0.061 vs 0.083). Table 2 likewise shows Whisper-M BWER < WER on both corpora (0.064 vs 0.074; 0.053 vs 0.077), and the same holds for all four Whisper checkpoints. Since EdX BWER is 'approximated as all non-function words', BWER < WER on EdX means content words are transcribed *better* than function words. Only the Wav2Vec2 rows have BWER > WER. The evidence supports the opposite of the stated conclusion for the best-performing models.",
+    "evidence": "Text: 'BWER exposes disparities that WER understates' and 'We observe that topic-specific vocabulary presents a greater challenge than surrounding function words.' Figure 3 bar labels (WER, BWER): 0.081/0.072, 0.093/0.074, 0.047/0.047, 0.044/0.043, 0.046/0.046, 0.067/0.039, 0.056/0.035, 0.083/0.061. Table 2 Whisper-M: EdX WER 0.074, BWER 0.064; M3AV WER 0.077, BWER 0.053.",
+    "suggested_fix": "Restrict the claim to the Wav2Vec2 family where BWER > WER, or replace it with what the data show; explain why EdX 'all non-function words' BWER is lower than WER."
+   },
+   {
+    "title": "Central thesis (accent -> knowledge loss) is never tested: no QA result is split by L1/L2",
+    "category": "missing-evidence",
+    "severity": "critical",
+    "location": "Title; Abstract (page 1); RQ1/RQ2 (page 4); Figure 4, Table 3 (page 5); Table 4 (page 6); Table 7 (page 7)",
+    "description": "The title and abstract frame the contribution as showing that transcription errors on *accented* speech remove the lesson. But every QA analysis (Figure 4, Table 3, Table 4) is aggregated over all speakers; there is no QA accuracy, QA drop, or McNemar result by L1 vs L2, and Figure 2 (the only L1/L2 result) is WER only, with no BWER split either. The only speaker-linked QA evidence is Table 7's 84% vs 91% percent_L2, an untested two-group descriptive from 194 25-word clips. RQ1 (ASR by speaker) and RQ2 (QA on ASR) are evaluated separately; their interaction, which is the paper's claim, is not.",
+    "evidence": "Abstract: 'errors from transcribing accented speech affect knowledge terms that carry a lesson's disciplinary meaning'. Figure 2 caption: 'ASR performance over speaker group (L1 vs. L2) measured by WER.' No L1/L2 column or row appears in Figure 4, Table 3 or Table 4. Table 7: percent_L2 84 vs 91 (n = 56 vs 138) with no test.",
+    "suggested_fix": "Report QA accuracy and reference-vs-ASR drop separately for L1 and L2 speakers (per QA model and per ASR system) with paired tests, and report BWER by L1/L2."
+   },
+   {
+    "title": "'Substantial differences among QA LLMs' is not supported; promised between-LLM tests are absent",
+    "category": "overclaim",
+    "severity": "major",
+    "location": "Abstract (page 1); 'Evaluation Metrics' (page 4); Figure 4 and first paragraph of 'QA Accuracy over ASR Transcriptions' (page 5)",
+    "description": "The abstract claims substantial differences among QA LLMs. Figure 4 shows reference accuracies of 0.954 / 0.940 / 0.935 (1.9-pt spread) and Whisper-M accuracies of 0.926 / 0.892 / 0.899 (3.4-pt spread); the text itself says Llama3 and Qwen2.5 'show very similar performance'. The Evaluation Metrics section promises 'statistical tests for important differences among LLMs', but the only test reported (McNemar) compares reference vs ASR within a model; no between-model test appears anywhere.",
+    "evidence": "Abstract: 'The results show substantial differences among QA LLMs'. Evaluation Metrics: 'We assess the QA LLMs with accuracy and statistical tests for important differences among LLMs.' Figure 4 labels: 0.954, 0.940, 0.935 (ref). Text: 'Llama3 (98.3%) and Qwen2.5 (97.9%) show very similar performance.'",
+    "suggested_fix": "Either report the between-LLM tests and quantify what 'substantial' means, or soften the abstract to 'small but consistent'."
+   },
+   {
+    "title": "'Transcription variability drives QA loss' contradicted within the Whisper family; bars not identified",
+    "category": "claims-vs-evidence",
+    "severity": "major",
+    "location": "Page 5, 'QA Accuracy over ASR Transcriptions' ('This ordering closely mirrors the ASR error-rate ordering from Table 2'); Figure 4; Table 2 (page 4)",
+    "description": "Figure 4 identifies bars only by family colour, so the reader cannot check which bar is which system. If the four Whisper bars follow Table 2 order (S, M, L-t, L), the worst-WER Whisper checkpoint (Whisper-L, WER 0.197 EdX / 0.168 M3AV) gives the *highest* QA accuracy for all three models (0.945 / 0.919 / 0.918) while the best-WER checkpoint Whisper-M gives among the lowest (0.926 / 0.892 / 0.899) - the inverse of the WER ordering. Only the coarse family-level ordering (Whisper > Wav2Vec2) mirrors Table 2. No WER-vs-QA-drop correlation is computed across the seven systems. The authors' own explanation that Whisper-L's WER comes from hallucination/repetition on long audio (p.5) is itself an argument that WER does not drive QA loss on local windows, undercutting the causal wording ('is what drives').",
+    "evidence": "Text: 'This ordering closely mirrors the ASR error-rate ordering from Table 2, indicating that transcription variability among ASR systems is what drives the downstream QA accuracy loss'. Figure 4 GPT4o Whisper bars: 0.933, 0.926, 0.944, 0.945; Llama3: 0.903, 0.892, 0.916, 0.919; Qwen2.5: 0.904, 0.899, 0.921, 0.918. Table 2 Whisper WER (EdX): S 0.075, M 0.074, L-t 0.114, L 0.197. Caption: 'colored by family (blue shades: Whisper; orange/red shades: Wav2Vec2)'.",
+    "suggested_fix": "Label each bar with its ASR system, report a per-system table of QA drop alongside WER/BWER, and compute a rank correlation; restate the claim at the level the data support."
+   },
+   {
+    "title": "'Human study confirms trends' rests on untested descriptives (Tables 5 and 7)",
+    "category": "unsupported-claim",
+    "severity": "major",
+    "location": "Abstract (page 1); contribution bullet 3 (page 2); Table 5 (page 6); Table 7 and surrounding text (page 7); Conclusions (page 7)",
+    "description": "The abstract says the human study 'shows consistent observations with ASR and QA LLMs' performance', bullet 3 says it 'confirms the observed performance trends', and the conclusion says accentedness 'correlates with ASR errors and downstream QA loss'. The only QA-related human evidence is Table 7: two groups of clips (n = 56 vs 138) with means only, no dispersion, no test. Differences are 3.8 vs 4.3 on a 9-point scale, 0.32 vs 0.37 BWER, and 84% vs 91% L2. Reconstructing the L2 counts (47/56 vs 126/138) gives a two-sided Fisher p of about 0.20, i.e., not significant. No correlation between accentedness and QA loss is computed anywhere, so the conclusion's 'correlates with ... downstream QA loss' has no coefficient behind it. Table 5's L1 vs L2 comparisons (2.6 vs 4.3 accentedness etc.) also carry no test, and 168 of 235 clips are from a single venue (NIH), confounding speaker group with topic. The clips are 25 words or fewer and QA was 'frequently 100% accurate', so the QA outcome is at ceiling.",
+    "evidence": "Table 7: 'QA 100%Correct 56 84 3.8 3.1 0.32'; 'QA < 100%Correct 138 91 4.3 3.4 0.37'. Text: 'the QA LLMs were only able to generate questions for 194 of the clip samples and were frequently 100% accurate.' Conclusion: 'perceived accentedness correlates with ASR errors and downstream QA loss'. Table 5: NIH n = 168 of 235.",
+    "suggested_fix": "Report tests and effect sizes with CIs for Tables 5 and 7 (or a regression of QA loss on accentedness controlling for venue), and downgrade 'confirms' to what the data support."
+   },
+   {
+    "title": "'Highly statistically robust' p-values appear to pool three QA models' answers to the same items as independent pairs",
+    "category": "statistics",
+    "severity": "major",
+    "location": "Table 3 (page 5); Figure 1 bottom panel (page 2); 'QA over Open-Ended Questions' (page 6); 'Evaluation Metrics' (page 4)",
+    "description": "Table 3 is captioned 'for all QA LLMs' and lists N = 1,107, yet the net discordance 160 - 37 = 123 equals 3.7 pt only when divided by 3 x 1,107 = 3,321 pairs, exactly matching Figure 1's '3.7 percentage points' and the per-model Whisper-M drops in Figure 4 (2.8 + 4.8 + 3.6 pt). Likewise the open-ended test reports n = 173 discordant pairs from 300 items, and (140 - 33)/900 = 11.9 pt matches the mean of Table 4's drops (11.9 pt). So the p-values (9.9e-20, 3.4e-17) treat three models answering the same item from the same corrupted window as three independent pairs. Because a corrupted keyword tends to break all three models at once, these pairs are strongly correlated and the p-values are inflated; the 'N=1,107' label misreports the effective sample. The test is also one-sided in the hypothesized direction. The Evaluation Metrics text ('For each QA model, we identify disagreements') implies per-model tests, which are not what Table 3 shows.",
+    "evidence": "Table 3: 'Full (N=1,107) All 160 37 9.9e-20 0.140'; (160-37)/3321 = 0.0370; Figure 1: 'Accuracy Gap = 3.7 percentage points', 'p = 9.9e-20'. Open-ended: 'toward=140, away=33, n=173, p = 3.4e-17'; (140-33)/900 = 0.119 vs Table 4 mean drop (10.3+11.3+14.0)/3 = 11.9 pt. Evaluation Metrics: 'For each QA model, we identify disagreements ...'.",
+    "suggested_fix": "Report McNemar per QA model (as the metrics section promises), or use an item-level test (e.g., cluster by item or test on item-majority correctness); state the actual number of pairs."
+   },
+   {
+    "title": "QA accuracy is measured on an adversarially pre-selected item set, not on 'how much of the recording's knowledge remains accessible'",
+    "category": "construct-validity",
+    "severity": "major",
+    "location": "Abstract (page 1); 'Knowledge-Centered Question Generation' (page 3); 'Datasets' (page 4); Figure 1 (page 2); Table 3 (page 5)",
+    "description": "Questions are generated only for 'knowledge-error keywords' - candidate keyword pairs are kept 'only ... where the ASR output denotes a genuinely different concept', and the specificity check refers to 'its ASR-mishearing'. So every item targets a term the ASR is already known to have corrupted. This has three consequences the paper does not acknowledge: (i) the abstract's claim that QA performance 'estimates how much of the recording's knowledge remains accessible after transcription' is not what is measured - the measure is QA robustness on the worst-case subset; (ii) even on this worst-case subset, ~96% of multiple-choice answers survive (94.3 -> 90.6), which cuts against the title's 'the lesson is missing'; (iii) the ASR system used for keyword selection is never named (Figure 1 says 'ASR Transcript (Whisper)'), so the cross-system comparison in Figure 4 is biased toward whichever system's errors defined the item set. It also makes Table 3's stated purpose ('verify ... the small set of disagreements exists for knowledge-intensive terms') circular: all 197 discordant pairs are classified as keyword substitution or deletion (137+29+23+8 = 197) because items were selected for keyword errors.",
+    "evidence": "Datasets: '1,113 knowledge-error keywords (457 EdX, 656 M3AV) surviving keyword triage'. Question Generation: 'keeping only pairs where the ASR output denotes a genuinely different concept'; 'any question whose stem or options contain the literal target keyword, its ASR-mishearing, or an obvious variant'. Abstract: 'The performance of QA tasks estimates how much of the recording's knowledge remains accessible after transcription.' Table 3 counts: 137+29 (Substitution) + 23+8 (Deletion) = 160+37.",
+    "suggested_fix": "State which ASR output defined the keyword set; either sample questions from all knowledge-bearing keywords (so accuracy estimates knowledge retention) or reword the abstract to describe worst-case keyword robustness; report the fraction of keywords corrupted by each ASR system."
+   },
+   {
+    "title": "Headline results use 294 items that failed answerability verification; verified results are in the missing Appendix",
+    "category": "missing-evidence",
+    "severity": "major",
+    "location": "'Datasets' (page 4); Figure 4 and Table 3 'Full (N=1,107)' rows (page 5); text 'We further report the accuracies from the verified question subset in the Appendix' (page 5) and 'Table 11' (page 6)",
+    "description": "1,107 questions were generated but only 813 (73.4%) were confirmed correct by both LLM judges. Figure 4 and the 'Full' rows of Table 3 nonetheless report on all 1,107, including 294 items whose answer key both judges rejected. The verified-subset accuracies, the per-ASR-system McNemar results, and 'Table 11' (cited for the 2.7-4.7 pt multiple-choice drops) are all deferred to an Appendix that is not part of the submission. The reader therefore cannot check the numbers the prose relies on (see also the 99.3/98.3/97.9 discrepancy).",
+    "evidence": "'yielding 1,107 generated questions (813 ground-truth-verified) after leak-filtering and answerability verification'; 'an item is retained only if both judges independently confirm the answer is correct given the passage' (yet N=1,107 is used); 'versus 2.7 to 4.7 pt in Table 11'; 'We further report the test results over all the ASR systems in the Appendix.'",
+    "suggested_fix": "Make the 813-item verified set the primary analysis in the main text, and include the per-ASR-system tests; explain why items rejected by both judges are retained in any analysis."
+   },
+   {
+    "title": "'Recent models reduce the L1/L2 accessibility gap' holds only in absolute terms; relative gap is flat",
+    "category": "overclaim",
+    "severity": "major",
+    "location": "Page 5, 'ASR Errors Across Speakers and Domains' (Figure 2 paragraph); Figure 2 (page 5)",
+    "description": "From the Figure 2 bar labels, the L2/L1 WER ratio is 1.40 (Whisper-S), 1.43 (Whisper-M), 1.38 (Whisper-L-t), 1.61 (Whisper-L), 1.40 (Wav2Vec2-B), 1.39 (Wav2Vec2-L), 1.29 (Wav2Vec2-L-s). The relative penalty for L2 speakers is essentially constant across systems and is *largest* for a Whisper checkpoint; the smallest relative gap belongs to a wav2vec2 model. The absolute gap shrinks only because overall WER shrinks (floor effect). 'Recent' is also undefined: all seven checkpoints are 2020-2022 public models with no release-date axis in the analysis.",
+    "evidence": "Figure 2 labels (L1, L2): Whisper-S 0.058/0.081; Whisper-M 0.056/0.080; Whisper-L-t 0.086/0.119; Whisper-L 0.133/0.214; Wav2Vec2-B 0.196/0.275; Wav2Vec2-L 0.171/0.238; Wav2Vec2-L-s 0.135/0.174. Text: 'the gap widening for the weaker Wav2Vec2 models and narrowing for the strongest Whisper models. This suggests recent models reduce the L1/L2 accessibility gap.'",
+    "suggested_fix": "Report relative (ratio) gaps or log-WER differences alongside absolute gaps; drop or qualify 'recent models reduce the gap'."
+   },
+   {
+    "title": "Attributing the L1/L2 disparity to 'recordings and speakers rather than training distribution' is a non sequitur",
+    "category": "reasoning",
+    "severity": "major",
+    "location": "Page 5, Figure 2 paragraph ('No system reverses this ordering ... indicating the L1/L2 disparity is a property of the recordings and speakers'); Introduction (page 1); Limitations (page 7)",
+    "description": "Consistency of the L2 > L1 ordering across seven systems does not localize the cause to recordings/speakers: all seven are trained on English-dominant, largely L1 data (wav2vec2 on LibriSpeech; Whisper on web-scraped English-heavy audio), so a shared training-data bias predicts exactly this uniform ordering. The sentence also contradicts the paper's own Introduction ('These disparities reflect imbalances in training data and modeling choices') and its Limitations ('Correlation cannot establish that perceived accent alone causes ASR errors, and unmeasured recording or speaker characteristics may contribute'). Topic is also confounded with speaker group (75% L2 by design; 168/235 human-study clips from NIH).",
+    "evidence": "'No system reverses this ordering for any speaker group, indicating the L1/L2 disparity is a property of the recordings and speakers rather than an artifact of any one ASR system's training distribution.' Introduction: 'These disparities reflect imbalances in training data and modeling choices'. Limitations: 'Correlation cannot establish that perceived accent alone causes ASR errors'.",
+    "suggested_fix": "Reword to 'not an artifact of any single system' and remove the causal attribution to speakers; note the shared training-data explanation."
+   },
+   {
+    "title": "Open-ended 'confirmation' conflates ASR effect with judge/item failure; Table 11 does not exist",
+    "category": "claims-vs-evidence",
+    "severity": "major",
+    "location": "Page 6, 'QA over Open-Ended Questions'; Table 4 (page 6); 'Transcript-Conditioned QA' (page 4)",
+    "description": "The section concludes 'This confirms that the multiple-choice format was masking part of the true effect.' But under the open-ended format the *reference* condition scores only 0.803 / 0.773 / 0.843 on items that were supposedly ground-truth-verified, so 16-23% of verified items are unanswerable from the gold window under this judge. The judge is Gemini, the same model that generated the questions, grading 'adversarially' against MC distractors, with no human validation of the judge and no inter-rater check. The 10-14 pt drops are of the same order as the baseline judge/item failure rate, so part of the 'larger gap' could be judge strictness on differently-worded (e.g., ASR-spelled) answers rather than knowledge loss. The comparison baseline '2.7 to 4.7 pt in Table 11' points to a table absent from the submission, and 'see Section for details' is a broken reference. Only Whisper-M and 300 items are used.",
+    "evidence": "Table 4: ref 0.803 / 0.773 / 0.843. Text: 'scored by the question-generation model acting as judge'; 'grade each answer adversarially'; '10.3 to 14.0 percentage points (pt) versus 2.7 to 4.7 pt in Table 11'; '(see Section for details)'.",
+    "suggested_fix": "Validate the open-ended judge against human grading on a sample, report reference-condition failure analysis, fix the Table 11 / Section references, and soften 'confirms' to 'suggests'."
+   },
+   {
+    "title": "'Easily extended' framework and 'cleaned and enriched' datasets: no release or extensibility evidence",
+    "category": "unsupported-claim",
+    "severity": "major",
+    "location": "Contribution bullets 1-2 (page 2)",
+    "description": "Bullet 1 claims the framework 'can be easily extended with recent model advancements' and bullet 2 claims datasets 'cleaned and enriched with speakers' demographics and knowledge-centered questions'. The paper contains no statement of code, prompt, question-set, or demographic-label release, no reproducibility section, and no demonstration of extension (e.g., adding a new ASR or QA model). Without release, neither contribution can be used or verified by others.",
+    "evidence": "'An assessment framework with seven ASR systems and three QA LLMs that can be easily extended with recent model advancements.' 'An empirical evaluation over two datasets ... that have been cleaned and enriched with speakers' demographics and knowledge-centered questions'. No 'available at' / release sentence anywhere in pages 1-9.",
+    "suggested_fix": "State what will be released (questions, keyword lists, L1/L2 labels, prompts, code) or reword the contributions."
+   },
+   {
+    "title": "EdX 'independently verified gold-standard' transcripts are platform caption files of unstated provenance",
+    "category": "construct-validity",
+    "severity": "major",
+    "location": "Methodology opening paragraph and 'Recording Corpus and Reference Transcripts' (page 2); 'Datasets' (page 4)",
+    "description": "The paired design assumes an 'independently verified gold-standard reference transcript'. For EdX (1,232 of 1,355 videos) the reference is 'EdX's officially published caption files'. No evidence is given that these captions are human-produced or human-verified; platform captions are frequently ASR-generated with variable correction. If so, the WER numbers, the 'knowledge-error keyword' selection, and the QA answer keys are all measured against a reference that may share ASR errors, biasing the L1/L2 gap and the QA drop in unknown directions.",
+    "evidence": "'(2) an independently verified gold-standard reference transcript'; 'Reference transcripts are not produced by the authors, but drawn from each corpus's own existing verified source: EdX's officially published caption files'.",
+    "suggested_fix": "Document how EdX captions were produced/verified, or audit a sample against manual transcription and report its WER."
+   },
+   {
+    "title": "L1/L2 labels for M3AV partly rest on name origin, contradicting the stated method",
+    "category": "internal-inconsistency",
+    "severity": "major",
+    "location": "Page 2 last paragraph and page 3 first paragraph ('L1/L2 speaker status ...')",
+    "description": "The paper states that L1/L2 status is 'established through biographical research rather than assumed from name or accent alone', but for M3AV 'an initial L1 hypothesis is formed from author name origin and affiliation, then verified for a subset of speakers'. The size of the verified subset is not given, so for an unknown fraction of M3AV speakers (which supply 168/235 human-study clips via NIH and 656/1,113 keywords) the label is exactly what the method claims to avoid.",
+    "evidence": "'L1/L2 speaker status is established through biographical research rather than assumed from name or accent alone.' vs 'For M3AV, an initial L1 hypothesis is formed from author name origin and affiliation, then verified for a subset of speakers via biographical lookup'.",
+    "suggested_fix": "Report the number/percentage of M3AV speakers whose label was verified and re-run L1/L2 analyses on the verified subset."
+   },
+   {
+    "title": "'These models outperform human listeners in transcription accuracy' is not supported by any comparable number",
+    "category": "unsupported-claim",
+    "severity": "minor",
+    "location": "Pages 6-7, 'Relationship to ASR Performance' paragraph; Table 5 (page 6); Table 2 (page 4)",
+    "description": "The claim rests on ASR 'numerous instances of 0 BWER' on clips vs human raters 'rarely' at zero. No clip-level ASR BWER is reported; Table 5 gives human BWER on 25-word clips (0.28 L1, 0.34 L2) while Table 2 gives ASR BWER over full recordings under a different keyword definition. The comparison is not like-for-like, and lay listeners transcribing 25-word snippets are not a benchmark for professional transcription.",
+    "evidence": "'the ASR models had numerous instances of 0 BWER, whereas human listeners rarely had zero when averaged across listeners. In other words, these models outperform human listeners in transcription accuracy'. Table 5: Int (BWER) L1 0.28, L2 0.34.",
+    "suggested_fix": "Report mean clip-level BWER for each ASR system on the same clips, or remove the claim."
+   },
+   {
+    "title": "Selective reporting of low correlations in Table 6",
+    "category": "selective-reporting",
+    "severity": "minor",
+    "location": "Page 6-7 text on Table 6; Table 6 (page 6)",
+    "description": "The text singles out Whisper-L and Whisper-L-t as having correlations 'below rs = .30' with human transcription error, but Whisper-S has the lowest correlations in the table (Int 0.215, Acc 0.148), also below .30, and is not mentioned. The framing 'ASR models are sensitive to features of speaker accents' also sits uneasily with Whisper-S's rs = 0.148 (near-zero).",
+    "evidence": "'Namely, Whisper-L and Whisper-L-t were below rs = .30.' Table 6: Whisper-S 0.148* / 0.271*** / 0.215***; Whisper-L-t 0.202** / 0.195** / 0.195**.",
+    "suggested_fix": "Describe the full pattern in Table 6, including Whisper-S."
+   },
+   {
+    "title": "Whisper-L hallucination explanation is asserted, not quantified",
+    "category": "unsupported-claim",
+    "severity": "minor",
+    "location": "Page 5, 'ASR Errors Across Speakers and Domains' second paragraph",
+    "description": "'Inspection of individual transcripts shows this is driven by hallucination and repetition failures on long lecture audio rather than a genuine capability deficit' is given without any count of affected recordings, insertion-rate breakdown, or WER after removing repetitions. Given that Whisper-L's WER is 2.5x Whisper-M's (Table 2), this is a material claim about the results.",
+    "evidence": "Table 2: Whisper-L WER 0.197 vs Whisper-M 0.074 (EdX). Text: 'Inspection of individual transcripts shows this is driven by hallucination and repetition failures'.",
+    "suggested_fix": "Report insertion rates or the fraction of segments with repetition loops per model."
+   },
+   {
+    "title": "Dataset counts inconsistent between Table 1 and text",
+    "category": "internal-inconsistency",
+    "severity": "minor",
+    "location": "Table 1 (page 4); 'Datasets' (page 4); page 3 first paragraph",
+    "description": "Table 1 lists 1,380 EdX videos with L1 343 + L2 1,037 = 1,380, but the text says 148 were excluded leaving 1,232 in the ASR evaluation; the table thus reports pre-exclusion counts without saying so, and the post-exclusion L1/L2 split is never given. Table 1's 'Groups' column says '27 courses' while page 3 says '27 unique instructors'.",
+    "evidence": "Table 1: 'EdX 1,380 27 courses 5 343 1,037'. Text: 'leaving 1,232 EdX and 123 M3AV videos (1,355 total)'; 'each of the 27 unique instructors'.",
+    "suggested_fix": "Report post-exclusion counts and L1/L2 split in Table 1; reconcile courses vs instructors."
+   },
+   {
+    "title": "Human-study QA details inconsistent with the pipeline description",
+    "category": "clarity",
+    "severity": "minor",
+    "location": "Page 7, paragraph before Table 7; Table 7",
+    "description": "The text says 'the QA LLMs were only able to generate questions for 194 of the clip samples', but questions are generated by Gemini, not by the QA LLMs. Table 7 does not say which transcript condition (reference or which ASR) the 'QA Accuracy' columns refer to, nor how '100% correct' is defined (all three models? all questions in a clip?). 194 clips are used here vs 235 in Table 5.",
+    "evidence": "'the QA LLMs were only able to generate questions for 194 of the clip samples and were frequently 100% accurate'; Table 7 header 'QA Accuracy gpt4o llama qwen'.",
+    "suggested_fix": "Specify the generator, the transcript condition, and the definition of 100% correct."
+   },
+   {
+    "title": "Redundancy explanation for Humanities/Social Sciences robustness is not measured",
+    "category": "unsupported-claim",
+    "severity": "minor",
+    "location": "Page 5, Figure 3 paragraph",
+    "description": "The claim that Humanities and Social Sciences 'are more robust when explanations are redundant' introduces a mechanism (redundancy) that is never measured. Figure 3 also shows Science (WER 0.044, BWER 0.043) as robust as Humanities (0.047/0.047) and Social Sciences (0.046/0.046), so the pattern is not specific to the named disciplines.",
+    "evidence": "'EdX Humanities and Social Sciences recordings are more robust when explanations are redundant'. Figure 3: Science 0.044/0.043; Humanities 0.047/0.047; Social Sciences 0.046/0.046.",
+    "suggested_fix": "Either measure redundancy (e.g., keyword repetition count) or present the observation without the mechanism."
+   },
+   {
+    "title": "Uncited policy claim of '99% accuracy' requirements",
+    "category": "unsupported-claim",
+    "severity": "minor",
+    "location": "Introduction, page 1, second paragraph",
+    "description": "'many institutions have developed policies that demand 99% accuracy of transcribed speech' is a factual claim used to motivate the work but carries no citation.",
+    "evidence": "'In response to this threat of inaccessible content, many institutions have developed policies that demand 99% accuracy of transcribed speech.'",
+    "suggested_fix": "Cite specific policies (e.g., DCMP/WCAG-derived institutional standards)."
+   },
+   {
+    "title": "Table 6 caption says 'ASR accuracy' but text says correlations are with BWER",
+    "category": "clarity",
+    "severity": "minor",
+    "location": "Table 6 caption (page 6); page 6 text 'Spearman correlations of BWER' and 'Spearman correlations were conducted with ASR accuracy on the clips'",
+    "description": "Positive correlations between accentedness and the ASR variable make sense only if that variable is an error rate; the caption and one sentence call it 'accuracy'. The direction of every interpretive claim in this section depends on which it is.",
+    "evidence": "Table 6 caption: 'Correlation study of human ratings and ASR accuracy.' Text: 'examining Spearman correlations of BWER'.",
+    "suggested_fix": "Label the variable as BWER consistently."
+   },
+   {
+    "title": "Which ASR system defined the 'knowledge-error keywords' and how many keywords each system corrupted?",
+    "category": "question",
+    "severity": "question",
+    "location": "'Knowledge-Centered Question Generation' (page 3); 'Datasets' (page 4); Figure 1 (page 2)",
+    "description": "Keyword triage keeps only pairs where 'the ASR output denotes a genuinely different concept', but the ASR system whose output was used is never named (Figure 1 suggests Whisper). For the cross-system comparison in Figure 4 to be interpretable, the authors need to report, per ASR system, the fraction of the 1,113 keywords that were actually corrupted in that system's transcript.",
+    "evidence": "'1,113 knowledge-error keywords ... surviving keyword triage'; Figure 1 header 'ASR Transcript (Whisper)'.",
+    "suggested_fix": "Name the selection system and report per-system keyword corruption rates."
+   },
+   {
+    "title": "Does the McNemar analysis test 'concentration in specific items' as claimed?",
+    "category": "question",
+    "severity": "question",
+    "location": "Page 5, paragraph beginning 'Moreover, we aim to understand whether the QA accuracy losses concentrate in specific items or degrade uniformly'",
+    "description": "The paragraph says statistical tests are used 'to verify this assumption' that disagreements concentrate on knowledge-intensive items. McNemar's test only assesses the direction of discordant pairs; it says nothing about whether losses concentrate on a few items or spread uniformly. No item-level analysis (e.g., how many items fail under all three models, or the distribution of failures across items/topics) is reported.",
+    "evidence": "'We thus use statistical tests to verify this assumption. Table 3 shows the results from assuming differences in the QA accuracies indicate the reference being correct and ASR transcripts being incorrect.'",
+    "suggested_fix": "Add an item-level concentration analysis or remove the concentration claim."
+   }
+  ]
  }
-]
+}
