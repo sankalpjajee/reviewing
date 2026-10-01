@@ -40,58 +40,40 @@ With DeepSeek V4 Flash, against ten baselines, K2D ties LATS on Closed (75%), ha
 
 ## Review
 
-### Quality
+**Quality.** The benchmark engineering is careful: frozen and hashed public sources, one shared tool interface, deterministic Closed scoring and a leakage-aware split. The main claims, however, are weakly supported.
 
-The benchmark engineering is careful: frozen and hashed public sources, one shared tool interface, deterministic Closed scoring, a leakage-aware split, and matched Closed/Open tasks. The authors are also candid in places. However, the main claims are weakly supported:
+The results come from single runs with no seeds, CIs or tests, and the headline margins are tiny. Out of 48 Closed tasks, K2D ties LATS (36 vs 36), beats Vanilla by 1 task and beats Claude Code and Codex by 2. Even if every differing task favoured K2D, exact McNemar would give only p = 1.0 against Vanilla and 0.5 against Claude Code/Codex. The Open leads are 1.6–2.0 judge points, and "zero HCV" is 0/48 against 1–2/48.
 
-- **The gains are within single-run noise.** Each configuration "runs once", with no seeds, CIs or tests. Out of 48 Closed tasks, K2D scores 36, the same as LATS. Vanilla scores 35; Reflexion, KnowAgent-AK, Claude Code and Codex 34; AriGraph 32. Even if every discordant pair favoured K2D, exact McNemar gives p = 1.0 against Vanilla, 0.5 against the 34/48 systems and 0.125 against AriGraph. The 95% CI for K2D's own 36/48 is [61%, 85%]. The Open leads are only 1.6–2.0 points on an LLM-judged scale (over ReAct, LATS and KnowAgent-AK), and the paper's own audit warns against reading small Open differences. "Zero HCV" is 0/48 against 1–2/48 (Fisher p ≥ 0.49), and because a violation caps the Open score at 49, it partly counts the same tasks as "best Open" a second time.
-- **The development families are included in every reported result.** Figure 3 describes "2 Dev + 6 Test families", but every table covers all 96 tasks. The paper never says what was tuned on the development families.
-- **The pre-acquisition claim is untested.** "Decisive-evidence acquisition" is never defined or tabulated, and it is reported as 100% for every system and every ablation. The benchmark therefore never produces the pre-acquisition failure the method is designed to fix. It also cannot "separate knowledge-acquisition from knowledge-use failures", as contribution (2) claims.
-- **The graph itself is never isolated.** No control keeps the same loop with a plain notes file returned after each edit. The "No post-edit" ablation compares K2D with an agent that writes state it cannot see. Every single-component ablation scores below the graph-free Vanilla agent on Closed (70.83 / 68.75 / 66.67 vs 72.92). The sentence "Only removal of post-edit feedback simultaneously degrades Closed, Open, and Judge agreement" is contradicted by Table 3.
-- **The comparison is not shown to be fair.** There is no compute budget and no reporting of tokens or cost. The paper does not say how IRCoT, HippoRAG, AriGraph and LATS were adapted, or which backbone and version Claude Code and Codex ran on. Claude Code's rates only work out over 47 Open tasks (3/47 and 10/47), with no explanation. Closed success also requires "required fields", so part of K2D's gain may be format compliance.
-- **The Open evaluation is weakly validated.** The three judge LLMs are unnamed. The human audit covers only 12 cases (Pearson 0.396), and it labels the inter-rater ICC as "within-expert consistency". Only one of the five rubric dimensions (K) is reported.
-- **RQ3 is shown only as a radar plot whose axis starts at 50 and clips one data point.** Taking out the primary backbone, the other three average just +6.25 Closed and +0.22 Open over ReAct. ReAct on the primary backbone looks anomalously weak, and that run supplies RQ1's 14.58-point headline. The pooled four-backbone Closed advantage may be the strongest result in the paper, but it is never tested.
-- **The mechanism claim rests on one trace.** Figure 5 compares one task across three different LLMs. In both DeepSeek traces, every edge is added in the final revision. That suggests the evidence-to-decision links are written at commitment time rather than guiding inquiry.
+All 96 tasks are reported, even though two families are designated for development. The "decisive-evidence acquisition" measure is undefined and sits at 100% for every system, so the pre-acquisition failure the method targets is never observed. No control separates the graph from a plain notes file. Every ablation scores below the graph-free Vanilla agent on Closed, and Table 3 contradicts the claim that "only" removing post-edit feedback degrades all metrics.
 
-### Clarity
+Compute, baseline adaptation and the backbones used for Claude Code and Codex are unreported. The three LLM judges are unnamed, and the human audit covers only 12 cases (Pearson 0.396). RQ3 appears only as a radar plot clipped at 50. The mechanism claim rests on a single Figure 5 trace, and in it all edges appear only in the final revision.
 
-The prose is fluent and Figure 1 conveys the idea well. The paper is nonetheless hard to evaluate or reimplement:
+**Clarity.** The prose is fluent and Figure 1 conveys the idea well, but the paper is hard to verify or reimplement. The core components are described only in prose: the projection $\Phi$, the edit API, the skill text, the review $\Psi$ and the "No post-edit" condition. The formalism is never used. There is no appendix with decoding settings, judge prompts, baseline adaptations, or an account of how the benchmark tasks were authored. The benchmark section relies on undefined jargon ("protected Open authority", "source–receipt binding", "hash-bound at one cutoff").
 
-- **The core components are described only in prose.** The projection $\Phi$, the edit API, the skill text, the review $\Psi$, and the meaning of "No post-edit" are never specified. The formalism is introduced but not used.
-- **Experimental details are missing.** There is no appendix, and the paper does not give decoding settings, judge identities or prompts, the baseline adaptations, or how the benchmark tasks were authored ("scenario generation").
-- **Undefined jargon** obscures the benchmark section: "protected Open authority", "source–receipt binding", "created in an unpassed state", "hash-bound at one cutoff".
-- **Figures have problems.** Figure 2 has a typo ("Hidden Constrainies") and sub-captions copied between rows. Figure 5 is unreadable and shows an internal task ID. Figure 4 clips data.
-- **Reporting is incomplete or inconsistent.** Experiments are labelled E1–E3 in captions but RQ1–RQ3 in the text. Table 1 defines D, F, R, A and a family macro that are never reported. Results are given as percentages without counts or uncertainty.
+There are also presentation problems:
+- Figure 2 has a typo ("Hidden Constrainies") and duplicated sub-captions.
+- Figure 5 is unreadable.
+- Experiments are labelled E1–E3 in some places and RQ1–RQ3 in others.
+- Table 1 defines metrics (D, F, R, A and a family macro) that are never reported.
+- Results are given as percentages, without counts or uncertainty.
 
-### Originality
+**Originality.** The paper's new contribution is a decision-typed state that the agent writes and revises as it gathers evidence, seeing the updated graph after each edit. It also contributes a matched Closed/Open benchmark built on frozen public data.
 
-The genuinely new elements are two:
+The novelty is narrower than claimed. The K2D gap overlaps three known problems: context utilisation, knowledge conflict and the LLM "knowing-doing gap". The DSG closely echoes established methods from decision analysis (PrOACT, influence diagrams, value of information), argumentation and IBIS, and Analysis of Competing Hypotheses.
 
-- an agent-authored, incrementally revised, decision-typed state interleaved with evidence gathering, with the updated graph shown after each edit;
-- a matched Closed/Open benchmark built on frozen public data.
+The closest LLM competitors are neither cited nor used as baselines: DeLLMa (ICLR 2025), DecisionFlow (Findings of EMNLP 2025), STRUX (NAACL 2025) and Argumentative LLMs (AAAI 2025). The same goes for structured-memory methods (CoALA, MemGPT, A-Mem) and self-verification methods (Self-Refine, CRITIC). There is no related-work section, and all 18 references are from CS.
 
-The novelty is narrower than the paper claims, however:
+**Significance.** If the results hold up, "explicit decision state with read-back" would be a reusable design principle, and the benchmark template could transfer to other domains. As it stands, the paper does not show that the decision-typed graph itself matters.
 
-- **The K2D gap overlaps known problems:** context utilisation, knowledge conflict, and the LLM "knowing-doing gap".
-- **The DSG closely echoes established schemes:** decision analysis (PrOACT, influence diagrams, value of information), argumentation and IBIS, and Analysis of Competing Hypotheses.
-- **The closest LLM competitors are neither cited nor used as baselines:** DeLLMa (ICLR 2025), DecisionFlow (Findings of EMNLP 2025), STRUX (NAACL 2025), Argumentative LLMs (AAAI 2025) and LLM-built influence diagrams.
-- **Structured agent memory is not discussed:** CoALA, MemGPT, A-Mem, Graph of Thoughts.
-- **Self-verification methods are not cited for the review step:** Self-Refine, CRITIC, Chain-of-Verification.
-- **There is no related-work section.** All 18 references are from CS.
-
-### Significance
-
-- **For AI research:** if the results are confirmed, "explicit decision state with read-back" is a reusable design principle, and the benchmark template could transfer to other domains. As it stands, the paper does not show that the decision-typed graph matters. The margins over the strongest baselines are 0–2 tasks, and there is no notes-file control.
-- **For social impact (AISI):** the paper defines no concrete problem, decision-maker, affected population or deployment path. It has no user study, even though the DSG's most natural benefit, auditability and contestability for human officials, needs one. The paper also has:
-  - no ethics statement, despite motivating agents that "determine eligibility";
-  - a two-sentence Limitations section;
-  - a "Safety" metric that really measures constraint compliance;
-  - no equity dimension in the rubric;
-  - worlds built on "benchmark-defined decision roles".
+For the AISI track, the social-impact case is thin:
+- There is no concrete problem, decision-maker, affected population, deployment path or user study. A user study is needed for the DSG's most natural benefit: auditability for human officials.
+- There is no ethics statement, although the paper motivates agents that "determine eligibility".
+- The Limitations section is two sentences long.
+- The "Safety" metric actually measures constraint compliance.
 
 ### Strengths (pros)
 
-1. **A clear, testable design hypothesis:** knowledge enters the decision state only through explicit, agent-authored edits, and the agent then reads the result back.
+1. **A clear, testable design hypothesis:** knowledge enters the decision state only through explicit, agent-authored edits that the agent then reads back.
 2. **Careful, reusable benchmark design:** official frozen sources with provenance and hashes, deterministic replay, a leakage-aware split, matched Closed/Open tasks, and a mix of document and structured-record queries.
 3. **Broad evaluation:** general, knowledge/graph and industrial baselines, component ablations, and four backbones.
 4. **Candid reporting of some negative results:** the tie with LATS, lower C-Support, losses to ReAct on Open for two backbones, and the unfavourable audit numbers.
@@ -101,14 +83,14 @@ The novelty is narrower than the paper claims, however:
 
 1. Headline gains are 0–4 of 48 tasks from single runs, with no statistical testing.
 2. The development families are included in the reported results.
-3. The pre-acquisition claim is untested, because the acquisition metric is undefined and at 100% for every system.
+3. The pre-acquisition claim is untested: the acquisition metric is undefined and at 100% for every system.
 4. The graph's own contribution is not isolated, and the ablation narrative contradicts Table 3.
 5. Compute, baseline adaptation and the industrial systems' backbones are unreported.
-6. The Open evaluation is weakly validated: unnamed judges and a 12-case audit.
+6. The Open evaluation is weakly validated: the judges are unnamed and the human audit covers only 12 cases.
 7. RQ3 is shown only as a clipped radar plot, and the mechanism claim rests on a single trace.
-8. Engagement with literature is weak: nothing outside CS, and the closest competitors are missing.
-9. The social-impact case is thin and there is no ethics statement.
-10. The work cannot be reproduced: no code, data, prompts or appendix.
+8. Engagement with the literature is weak: nothing from outside CS, and the closest competitors are missing.
+9. The social-impact case is thin, and there is no ethics statement.
+10. The work cannot be reproduced: there is no code, data, prompts or appendix.
 
 **What would change my assessment:**
 - results on the test families only;
@@ -116,8 +98,8 @@ The novelty is narrower than the paper claims, however:
 - a notes-file control that keeps the same loop;
 - a defined, per-system acquisition metric;
 - a per-backbone RQ3 table;
-- cost reporting and the backbone used for Claude Code and Codex;
-- named judges, all five rubric dimensions, and a larger audit;
+- cost reporting, and the backbones used for Claude Code and Codex;
+- named judges, a larger audit and all five rubric dimensions;
 - a release commitment;
 - a related-work section and an ethics statement.
 
