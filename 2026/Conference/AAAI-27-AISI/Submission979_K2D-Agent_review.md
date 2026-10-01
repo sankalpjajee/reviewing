@@ -145,19 +145,25 @@ For the AISI track, the social-impact case is thin:
 
 ## Questions For The Authors
 
-1. **Development versus test.** What were the two development families used for (skill, metamodel, review prompt, judge rubric, benchmark construction)? Please report Tables 2 and 3 on the six test families only (36 Closed / 36 Open tasks).
-2. **Variance.** What decoding settings were used? Can you report at least 3 seeds for K2D, LATS, Vanilla, ReAct and the three ablations, with CIs and paired tests (exact McNemar for Closed; paired permutation or Wilcoxon for Open)? Which orderings in Tables 2 and 3 survive?
-3. **Decisive-evidence acquisition.** How is it defined and measured, including for Claude Code and Codex? How does 100% acquisition for IRCoT and HippoRAG fit with their 43.75% C-Support? Since acquisition is at ceiling for every system, what evidence supports the claim that K2D addresses *pre*-acquisition failures? Are there tasks where decisive evidence is hard to find?
-4. **Graph versus any persistent notes.** Can you add (a) the same skill and review loop with a free-text notes file returned after every edit, and (b) an untyped graph without the metamodel? How exactly is "No post-edit" implemented, given that the agent observes $\Phi(G_t)$ at every turn?
-5. Why does every single-component ablation score *below* the graph-free Vanilla agent on Closed (70.83 / 68.75 / 66.67 vs 72.92)?
-6. **Industrial systems and invalid outputs.** Which backbone, version and configuration did Claude Code and Codex use, and were their native tools disabled? What happened to the Claude Code Open task that the 47-task denominator implies? Please give invalid-output counts per system and backbone.
-7. **Compute.** What are the mean tokens, tool calls, turns, wall-clock time and cost per task for each system? How does K2D compare with LATS at a matched budget?
-8. **Judging.** Which three LLMs form the panel, and do any overlap with the agent backbones? How are Open validity and HCV decided (rules, judges or experts)? Please report D, F, R and A per system, and describe any control for length or format bias.
-9. **RQ3.** Please give a per-backbone table (Closed k/48, Open mean ± SE, HCV k/48) and a stratified pooled test. Why is ReAct on Flash so much weaker than Vanilla (−12.5) when it beats Vanilla on the other backbones? What happened in the Qwen3.6 and DiffusionGemma runs?
-10. **Closed failures.** How do they break down (wrong option / missing required fields / constraint violation / invalid submission)? What is option-only accuracy? What are the candidate-set sizes and the chance baseline, and how does a no-tool (closed-book) agent perform?
-11. **Benchmark authorship.** Who or what wrote the worlds, candidate sets, rules, rubrics and reference plans, and which LLMs, if any, were used? How many worlds were admitted or rejected? How many experts took part, with what qualifications and what agreement? Were any of them practitioners in these domains?
-12. **DSG dynamics.** In Figure 5 both DeepSeek traces add all edges in the final revision. At population level, when are relational edges written relative to the last acquisition? What fraction of inquiry nodes lead to tool calls? Does perturbing a decisive Knowledge node change the decision (faithfulness)?
-13. **Intended use and release.** Who would use K2D, and is it meant to recommend or to decide? Has any practitioner assessed whether the DSG helps them audit or contest a decision? Will K2D-Bench, the replay harness, the skill, prompts and rubrics be released, and under what licences given the source terms?
+1. **Development vs test.** What were the two development families used for (skill, metamodel, review prompt, judge rubric)? Please report Tables 2–3 on the six test families only.
+2. **Variance.** What decoding settings were used? Can you report at least 3 seeds with CIs and paired tests (McNemar for Closed, paired permutation or Wilcoxon for Open)? Which orderings in Tables 2–3 survive?
+3. **Acquisition.**
+   - How is "decisive-evidence acquisition" defined and measured, including for Claude Code and Codex?
+   - How does 100% acquisition fit with the 43.75% C-Support of IRCoT and HippoRAG?
+   - Since acquisition is 100% for every system, what evidence supports the claim that K2D fixes *pre*-acquisition failures?
+4. **Graph vs notes.** Can you add a control with the same skill and review loop, but a free-text notes file returned after every edit instead of the graph? An untyped graph would also help. How exactly is "No post-edit" implemented, given that the agent observes $\Phi(G_t)$ at every turn?
+5. **Ablations below Vanilla.** Why does every single-component ablation score below the graph-free Vanilla agent on Closed (70.83 / 68.75 / 66.67 vs 72.92)?
+6. **Baselines and compute.**
+   - Which backbone and version did Claude Code and Codex use?
+   - How were IRCoT, HippoRAG, AriGraph and LATS adapted?
+   - Please report tokens, tool calls and cost per task.
+   - Why does one Claude Code Open task seem to be missing (its rates only work out over 47 tasks)?
+   - Please give invalid-output counts per system.
+7. **Judging.** Which three LLMs form the panel, and do any of them overlap with the agent backbones? Who decides HCV and Open validity? Please report all five rubric dimensions (D, F, K, R, A).
+8. **RQ3.** Please give a per-backbone table (Closed k/48, Open mean ± SE, HCV) and a pooled stratified test. Why is ReAct much weaker than Vanilla only on Flash? What happened with the Qwen3.6 and DiffusionGemma runs?
+9. **Closed failures and benchmark authorship.** How do Closed failures break down (wrong option, missing fields, constraint violation, invalid output)? Who or what wrote the worlds, candidates, rules, rubrics and reference plans? How many experts reviewed them, and with what qualifications?
+10. **DSG dynamics.** In Figure 5, all edges appear only in the final revision. Across all episodes, when are relational edges written relative to the last acquisition? Does perturbing a decisive Knowledge node change the decision?
+11. **Intended use and release.** Is K2D meant to recommend or to decide? Has any practitioner assessed whether the DSG helps them audit or contest a decision? Will the benchmark, harness, skill, prompts and rubrics be released, and under what licences?
 
 ---
 
