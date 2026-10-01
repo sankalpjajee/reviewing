@@ -169,18 +169,7 @@ For the AISI track, the social-impact case is thin:
 
 ## Ethical Considerations
 
-The paper does not adequately address the relevant ethical considerations, although I do not think it needs a separate specialised ethics review provided the following are added:
-
-- **Intended use and risk.** The Introduction motivates agents that "determine eligibility, prioritize an intervention", and the families include housing services, food and product safety, clinical-trial reporting and 311 requests. Yet there is no ethics or broader-impact statement, and nothing about the following:
-  - whether the system recommends or decides;
-  - human oversight;
-  - accountability;
-  - contestability for affected people;
-  - automation bias. A persuasive, source-linked decision graph may *increase* over-reliance even when, as the Limitations admit, the graph "may omit requirements, misread evidence, or remain inconsistent".
-- **Fairness and equity.** Objectives and constraints are fixed by the benchmark authors (sometimes as "benchmark-defined decision roles"). The Open rubric (D/F/K/R/A) has no dimension for distributional effects or affected parties. The paper should discuss whose values the objectives encode. Labelling 100 − HCV as "Safety" should be reconsidered, since it concerns constraint compliance, not safety for people.
-- **Data.** The paper records source "terms" but does not report them, the licensing, or any redistribution plan. Some sources can contain identifying information: NYC HPD registration contacts, business names and licence numbers in inspection data, locations of 311 requests. A data statement on identifying fields and how they were handled is needed.
-- **Human participants.** The admission reviewers, "two domain experts" and "three blinded experts" are undocumented. The paper should report their recruitment, qualifications, compensation and IRB or exemption status.
-- **Limitations.** The two-sentence Limitations section should be expanded. It should cover single-run evaluation, jurisdictions limited to English-speaking UK/EU/North American sources, the gap between frozen single-answer worlds and real discretionary decisions, and harmful failure modes such as confident wrong determinations.
+No. The paper has no ethics or broader-impact statement, even though it motivates agents that "determine eligibility, prioritize an intervention", and its benchmark covers housing services, food and product safety, clinical trials and 311 requests. It does not say whether K2D recommends or decides. It also does not discuss human oversight, accountability, contestability or automation bias. This matters because a persuasive, source-linked graph could increase over-reliance even when, as the Limitations admit, it "may omit requirements, misread evidence, or remain inconsistent". The Open rubric has no equity or affected-party dimension, and "Safety" (100 − HCV) measures constraint compliance, not safety for people. On data, the paper does not report source terms, licensing or redistribution plans, and some sources may contain identifying information (NYC HPD registration contacts, business names in inspection records, 311 request locations). It does not describe how the human experts were recruited, their qualifications, their compensation, or IRB status, and the two-sentence Limitations section should be expanded. I do not think a specialised ethics review is needed, provided the authors add an ethics statement, a data statement and expanded limitations.
 
 ---
 
