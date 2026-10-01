@@ -30,185 +30,96 @@ Promising explicit decision-state agent and a well-built matched benchmark, but 
 
 ## Summary
 
-The paper names a *knowledge-to-decision (K2D) gap* in LLM agents, which it says occurs at two stages:
+The paper identifies a *knowledge-to-decision (K2D) gap* in LLM agents. An agent may fail to recognise what it needs to know (before acquisition), or retrieve evidence that never changes its decision (after acquisition). The proposed **K2D-Agent** has a single LLM build and revise a task-specific **Decision State Graph (DSG)** that links the problem, source-grounded knowledge, decision elements and candidate decisions. The agent uses the graph to direct its tool queries, sees the updated graph after every edit, and reviews its proposal against the graph before committing.
 
-- **Before acquisition:** latent decision dependencies do not reveal what the agent needs to find out.
-- **After acquisition:** retrieved evidence sits in the context window but never explicitly changes the decision state.
+The paper also introduces **K2D-Bench**: 48 frozen worlds built from official public data in eight public-administration domains. Each world has a deterministically scored Closed task and an LLM-judged Open planning task.
 
-**K2D-Agent.** A single LLM agent maintains a task-instance **Decision State Graph (DSG)**:
-
-- An advisory metamodel with four node classes (Problem, Knowledge, Decision Elements, Candidate Decisions) and typed edges (support, challenge, dependence, satisfaction, violation, harm), with scope, uncertainty and provenance kept as properties.
-- The agent uses unresolved structure in the graph to decide what to look up with SEARCH/READ/QUERY tools.
-- It writes findings back as atomic, agent-authored graph edits and receives the updated graph after each edit.
-- It performs one graph-grounded review before committing.
-- A "recommended operating skill" guides graph use without fixing a tool sequence.
-
-**K2D-Bench.** 48 frozen worlds built from official public data in eight families (UK Parliament, Calgary traffic and flood, Chicago food inspections, EU Safety Gate, NYC HPD, ClinicalTrials.gov, Vancouver 3-1-1). Each world yields two matched tasks:
-
-- a **Closed** task: a finite candidate set, scored deterministically;
-- an **Open** task: a bounded action plan, scored by a blind three-LLM panel, with a hard-constraint violation (HCV) capping the score at 49.
-
-**Results.**
-
-- **RQ1 (DeepSeek V4 Flash, 10 baselines including Claude Code and Codex):** K2D ties LATS on Closed (75.00%), has the highest Open score (76.47) and has 0% HCV.
-- **RQ2 (ablations):** removing the skill, post-edit graph feedback, or the final review lowers Closed accuracy. Removing post-edit feedback lowers it most (66.67%).
-- **RQ3 (four complete backbones):** K2D averages +8.33 Closed points over ReAct and +10.94 over Vanilla. Open gains are small and depend on the model.
-- **Judge audit:** a 12-case human audit reports moderate judge–expert rank agreement.
+With DeepSeek V4 Flash, against ten baselines, K2D ties LATS on Closed (75%), has the best Open score (76.47) and has no hard-constraint violations. Ablations point to post-edit graph feedback as the most important component. Averaged over four backbones, K2D's Closed gains over ReAct and Vanilla hold.
 
 ---
 
 ## Review
 
-### Overall assessment
+### Quality
 
-The paper asks a relevant question: does an explicit, revisable decision state help LLM agents turn evidence they have retrieved into better commitments? The benchmark engineering is careful: frozen and hashed public snapshots, a shared tool interface, deterministic Closed scoring, leakage-aware splits, and matched Closed/Open tasks. The authors are also candid in places. They say K2D only ties LATS on Closed, that it trails on C-Support, and that it loses to ReAct on Open for two backbones, and they label Figure 5 as illustrative.
+The benchmark engineering is careful: frozen and hashed public sources, one shared tool interface, deterministic Closed scoring, a leakage-aware split, and matched Closed/Open tasks. The authors are also candid in places. However, the main claims are weakly supported:
 
-However, the central empirical claims are not supported at the level of confidence the abstract and contributions imply:
+- **The gains are within single-run noise.** Each configuration "runs once", with no seeds, CIs or tests. Out of 48 Closed tasks, K2D scores 36, the same as LATS. Vanilla scores 35; Reflexion, KnowAgent-AK, Claude Code and Codex 34; AriGraph 32. Even if every discordant pair favoured K2D, exact McNemar gives p = 1.0 against Vanilla, 0.5 against the 34/48 systems and 0.125 against AriGraph. The 95% CI for K2D's own 36/48 is [61%, 85%]. The Open leads are only 1.6–2.0 points on an LLM-judged scale (over ReAct, LATS and KnowAgent-AK), and the paper's own audit warns against reading small Open differences. "Zero HCV" is 0/48 against 1–2/48 (Fisher p ≥ 0.49), and because a violation caps the Open score at 49, it partly counts the same tasks as "best Open" a second time.
+- **The development families are included in every reported result.** Figure 3 describes "2 Dev + 6 Test families", but every table covers all 96 tasks. The paper never says what was tuned on the development families.
+- **The pre-acquisition claim is untested.** "Decisive-evidence acquisition" is never defined or tabulated, and it is reported as 100% for every system and every ablation. The benchmark therefore never produces the pre-acquisition failure the method is designed to fix. It also cannot "separate knowledge-acquisition from knowledge-use failures", as contribution (2) claims.
+- **The graph itself is never isolated.** No control keeps the same loop with a plain notes file returned after each edit. The "No post-edit" ablation compares K2D with an agent that writes state it cannot see. Every single-component ablation scores below the graph-free Vanilla agent on Closed (70.83 / 68.75 / 66.67 vs 72.92). The sentence "Only removal of post-edit feedback simultaneously degrades Closed, Open, and Judge agreement" is contradicted by Table 3.
+- **The comparison is not shown to be fair.** There is no compute budget and no reporting of tokens or cost. The paper does not say how IRCoT, HippoRAG, AriGraph and LATS were adapted, or which backbone and version Claude Code and Codex ran on. Claude Code's rates only work out over 47 Open tasks (3/47 and 10/47), with no explanation. Closed success also requires "required fields", so part of K2D's gain may be format compliance.
+- **The Open evaluation is weakly validated.** The three judge LLMs are unnamed. The human audit covers only 12 cases (Pearson 0.396), and it labels the inter-rater ICC as "within-expert consistency". Only one of the five rubric dimensions (K) is reported.
+- **RQ3 is shown only as a radar plot whose axis starts at 50 and clips one data point.** Taking out the primary backbone, the other three average just +6.25 Closed and +0.22 Open over ReAct. ReAct on the primary backbone looks anomalously weak, and that run supplies RQ1's 14.58-point headline. The pooled four-backbone Closed advantage may be the strongest result in the paper, but it is never tested.
+- **The mechanism claim rests on one trace.** Figure 5 compares one task across three different LLMs. In both DeepSeek traces, every edge is added in the final revision. That suggests the evidence-to-decision links are written at commitment time rather than guiding inquiry.
 
-- The Table 2 and Table 3 differences that carry the argument amount to 0–4 tasks out of 48, each from a single run.
-- The development families appear to be included in every reported number.
-- The diagnostic meant to separate acquisition failures from use failures is undefined and sits at 100% for every system. The "pre-acquisition" half of the K2D claim is therefore never tested.
-- No condition isolates the graph itself from any persistent, re-read scratchpad.
+### Clarity
 
-For the AISI track, the social-impact case is also underdeveloped. There are no stakeholders, no intended users, no deployment pathway, no evaluation of the DSG's natural selling point (auditability), no ethics statement, and no engagement with literature outside CS. I think this could become a good paper with the analyses requested below, but in its current form I lean toward rejection.
+The prose is fluent and Figure 1 conveys the idea well. The paper is nonetheless hard to evaluate or reimplement:
 
-### Pros
+- **The core components are described only in prose.** The projection $\Phi$, the edit API, the skill text, the review $\Psi$, and the meaning of "No post-edit" are never specified. The formalism is introduced but not used.
+- **Experimental details are missing.** There is no appendix, and the paper does not give decoding settings, judge identities or prompts, the baseline adaptations, or how the benchmark tasks were authored ("scenario generation").
+- **Undefined jargon** obscures the benchmark section: "protected Open authority", "source–receipt binding", "created in an unpassed state", "hash-bound at one cutoff".
+- **Figures have problems.** Figure 2 has a typo ("Hidden Constrainies") and sub-captions copied between rows. Figure 5 is unreadable and shows an internal task ID. Figure 4 clips data.
+- **Reporting is incomplete or inconsistent.** Experiments are labelled E1–E3 in captions but RQ1–RQ3 in the text. Table 1 defines D, F, R, A and a family macro that are never reported. Results are given as percentages without counts or uncertainty.
 
-1. **Well-motivated representational idea.** The graph is task-instance and decision-centric, not corpus-centric. Knowledge enters the decision state only through agent-authored edits, and the agent sees the updated graph after each edit. This is a clear design hypothesis that can be tested.
-2. **Thoughtful benchmark design.** Matched Closed/Open tasks share one world. Sources are official and frozen, with publisher, URL, terms and content hash recorded. Replay is deterministic, and the split is designed to prevent leakage across source, entity, time, rule and near-duplicate groups. This mix of documents and structured records needing row-level queries is closer to real administrative decisions than most QA-style agent benchmarks, and may be the paper's most lasting contribution.
-3. **Broad comparison.** The baselines cover general agents, knowledge/graph agents and two industrial agents. There are component ablations and a four-backbone transfer study.
-4. **Honest reporting of some negative results,** as noted above, and a human audit whose unfavourable numbers are reported rather than hidden (Pearson 0.396, a +14.83 offset).
+### Originality
 
-### Major concerns
+The genuinely new elements are two:
 
-**M1. The headline differences are within single-run noise.** Each configuration "runs once on all 96 tasks" and the paper gives no seeds, temperature, SDs, CIs or significance tests. Converting Table 2 and Table 3 to counts out of 48 Closed tasks gives:
+- an agent-authored, incrementally revised, decision-typed state interleaved with evidence gathering, with the updated graph shown after each edit;
+- a matched Closed/Open benchmark built on frozen public data.
 
-| Comparison | Closed (k/48) | Tasks behind K2D (36/48) | Best-case exact McNemar *p* (all discordant pairs favour K2D) |
-|---|---|---|---|
-| LATS | 36 | 0 | – |
-| Vanilla Tool Agent | 35 | 1 | 1.00 |
-| Reflexion / KnowAgent-AK / Claude Code / Codex | 34 | 2 | 0.50 |
-| AriGraph | 32 | 4 | 0.125 |
-| ReAct | 29 | 7 | 0.016 (fails a Holm correction across the 10 baselines) |
-| No skill / No review / No post-edit | 34 / 33 / 32 | 2 / 3 / 4 | 0.50 / 0.25 / 0.125 |
+The novelty is narrower than the paper claims, however:
 
-The 95% Wilson interval for K2D's own 36/48 is [61.2%, 85.1%], which covers every system from AriGraph upward.
+- **The K2D gap overlaps known problems:** context utilisation, knowledge conflict, and the LLM "knowing-doing gap".
+- **The DSG closely echoes established schemes:** decision analysis (PrOACT, influence diagrams, value of information), argumentation and IBIS, and Analysis of Competing Hypotheses.
+- **The closest LLM competitors are neither cited nor used as baselines:** DeLLMa (ICLR 2025), DecisionFlow (Findings of EMNLP 2025), STRUX (NAACL 2025), Argumentative LLMs (AAAI 2025) and LLM-built influence diagrams.
+- **Structured agent memory is not discussed:** CoALA, MemGPT, A-Mem, Graph of Thoughts.
+- **Self-verification methods are not cited for the review step:** Self-Refine, CRITIC, Chain-of-Verification.
+- **There is no related-work section.** All 18 references are from CS.
 
-- **Open:** K2D leads by 1.57 over ReAct, 1.89 over LATS and 1.98 over KnowAgent-AK, on a 0–100 LLM-judged scale, with no variance reported. The paper's own audit section cautions "against interpreting small Open differences as evaluator-independent effects". Yet the claim of the "strongest combined Closed/Open performance" rests on exactly these margins, because Closed is a tie.
-- **HCV:** "zero observed HCV" is 0/48 against 1/48 for LATS (Fisher *p* = 1.0) and 2/48 for most baselines (*p* ≈ 0.49). Because an HCV caps an Open score at 49, "best Open" and "zero HCV" partly count the same one or two tasks twice.
+### Significance
 
-**M2. The development families are included in the reported results.** Figure 3 and the text describe a "2 Dev + 6 Test families" split, but Table 2 is "E1 on all 96 tasks", and the ablations and audit also cover all families. The paper never says what the development families were used for. If the operating skill, metamodel, review prompt or judge rubric were iterated on them, 25% of the reported tasks are in-sample for K2D and not for the baselines. With margins of 0–2 tasks, this could change the ranking. The results should be reported on the six test families only (36 Closed and 36 Open tasks).
+- **For AI research:** if the results are confirmed, "explicit decision state with read-back" is a reusable design principle, and the benchmark template could transfer to other domains. As it stands, the paper does not show that the decision-typed graph matters. The margins over the strongest baselines are 0–2 tasks, and there is no notes-file control.
+- **For social impact (AISI):** the paper defines no concrete problem, decision-maker, affected population or deployment path. It has no user study, even though the DSG's most natural benefit, auditability and contestability for human officials, needs one. The paper also has:
+  - no ethics statement, despite motivating agents that "determine eligibility";
+  - a two-sentence Limitations section;
+  - a "Safety" metric that really measures constraint compliance;
+  - no equity dimension in the rubric;
+  - worlds built on "benchmark-defined decision roles".
 
-**M3. The acquisition-versus-use diagnostic is undefined and saturated, so the pre-acquisition claim is untested.** The paper's causal argument rests on this sentence: "all methods acquire the declared decisive evidence on every Closed task … the gain is better explained by decision use". RQ2 adds that "All ablations retain 100% decisive-evidence acquisition … locating the loss after retrieval". Three problems follow:
+### Strengths (pros)
 
-- **The measure is not defined anywhere.** It is not in Table 1 and is never tabulated. It is not explained how it was measured for the black-box Claude Code and Codex. It also sits uneasily beside a C-Support of 43.75% for IRCoT and HippoRAG. The two can be reconciled (evidence can be acquired without being cited), but the paper must say how.
-- **Pre-acquisition failure is never observed.** The measure is 100% for all 11 systems and all 3 ablations, so the benchmark never produces the failure that motivates half the method: Figure 1's "FAILURE 1" and the DSG-guided inquiry. As a result, the abstract's claim that K2D "addresses pre- and post-acquisition K2D failures" and contribution (2)'s diagnostics that "separate knowledge-acquisition from knowledge-use failures" are only half supported.
-- **C-Support is not a clean acquisition measure either.** It combines two procedures in one column ("required-source coverage substitutes when logs are unavailable") and depends on citations in the final output.
+1. **A clear, testable design hypothesis:** knowledge enters the decision state only through explicit, agent-authored edits, and the agent then reads the result back.
+2. **Careful, reusable benchmark design:** official frozen sources with provenance and hashes, deterministic replay, a leakage-aware split, matched Closed/Open tasks, and a mix of document and structured-record queries.
+3. **Broad evaluation:** general, knowledge/graph and industrial baselines, component ablations, and four backbones.
+4. **Candid reporting of some negative results:** the tie with LATS, lower C-Support, losses to ReAct on Open for two backbones, and the unfavourable audit numbers.
+5. **Socially relevant domains** built from real public data.
 
-**M4. The graph itself is never isolated, and the ablation narrative does not match Table 3.**
+### Weaknesses (cons)
 
-- **No graph-free control with the same loop.** RQ2 removes the skill, post-edit feedback or review, but no condition keeps the loop while replacing the typed DSG with an unstructured, persistent notes file that is also returned after each edit.
-- **The key ablation is a weak contrast.** The "No post-edit" condition compares K2D with an agent that writes state it cannot see. Standard tool loops and memory-editing agents return the result of a write by default. The result therefore shows that writing without reading back hurts, not that a decision-typed graph helps.
-- **Every ablation falls below no architecture at all.** On Closed, each single-component ablation scores below the graph-free Vanilla agent (72.92): No skill 70.83, No review 68.75, No post-edit 66.67. So removing any one part is worse than having no K2D architecture. Either the components are strongly interdependent, or noise of ±2–4 tasks dominates. The design cannot tell these apart.
-- **"Only" is false.** The sentence "Only removal of post-edit feedback simultaneously degrades Closed, Open, and Judge agreement" is contradicted by Table 3: all three ablations lower Closed and Open and raise J-disagree.
-- **The functional attribution does not follow either.** "The skill chiefly improves support coverage, while review improves commitment" is not what Table 3 shows: No review also cuts C-Support by 8.34 points (4 tasks), more than its Closed drop.
-- **The post-edit condition is unspecified.** The agent observes $O_t=\Phi(G_t)$ at every turn, so it is unclear what "No post-edit" removes.
+1. Headline gains are 0–4 of 48 tasks from single runs, with no statistical testing.
+2. The development families are included in the reported results.
+3. The pre-acquisition claim is untested, because the acquisition metric is undefined and at 100% for every system.
+4. The graph's own contribution is not isolated, and the ablation narrative contradicts Table 3.
+5. Compute, baseline adaptation and the industrial systems' backbones are unreported.
+6. The Open evaluation is weakly validated: unnamed judges and a 12-case audit.
+7. RQ3 is shown only as a clipped radar plot, and the mechanism claim rests on a single trace.
+8. Engagement with literature is weak: nothing outside CS, and the closest competitors are missing.
+9. The social-impact case is thin and there is no ethics statement.
+10. The work cannot be reproduced: no code, data, prompts or appendix.
 
-**M5. Fairness of the comparison is under-specified.**
-
-- **Compute:** there is "no explicit tool or token budget", and no tokens, tool calls, turns, time or cost are reported for any system. K2D's edit/observe/review loop and LATS's tree search may simply use more compute.
-- **Baseline ports:** the paper does not describe how IRCoT, HippoRAG and AriGraph (designed for static multi-hop QA or games) or LATS and Reflexion (value and feedback sources, rollouts) were adapted to an interactive SEARCH/READ/QUERY decision environment. The conclusion that "retrieval graphs or world-model memory are not sufficient substitutes" depends on how faithful these ports are.
-- **Industrial systems:** Claude Code and Codex are "official releases evaluated as black boxes", but the paper does not say whether they ran on DeepSeek V4 Flash or on their native models, which versions were used, or whether their native tools were disabled. If they used native models, backbone and architecture are confounded.
-- **A missing Claude Code task:** Claude Code's HCV (6.38) and J-disagree (21.28) only work out as 3/47 and 10/47. Every other rate in Table 2 is out of 48. This is probably one invalid Open output, which the protocol allows, but it should be disclosed, together with invalid-output counts for every system. Each invalid output moves an Open mean by about 1.5 points, which is comparable to K2D's Open margins.
-- **Format versus correctness:** Closed success requires "exact option selection satisfying hard constraints *and required fields*". K2D explicitly turns "process or submission requirements" into graph elements and re-checks them in review, so part of its Closed advantage may be format compliance. A failure breakdown is needed: wrong option, missing fields, constraint violation, invalid submission.
-- **Missing baseline type:** no decision-structured baseline is included (see Literature below).
-
-**M6. The Open evaluation is weakly validated.**
-
-- **Unnamed judges:** the three judge LLMs are never named, so self-preference toward the DeepSeek or GPT backbones cannot be checked. A preference for K2D's evidence-linked, structured output format is also plausible and untested.
-- **Small audit:** it covers 12 cases, sampled by disagreement stratum rather than at random. With n = 12, Pearson 0.396 has a 95% CI of roughly [−0.23, 0.79] and Spearman 0.586 roughly [0.02, 0.87].
-- **Mislabelled reliability:** ICC(2,k) = 0.587 is described as "within-expert consistency", but it is the inter-rater reliability of the three-expert mean. The implied single-rater ICC(2,1) is about 0.32.
-- **No system-level check:** the audit correlates individual cases, not systems, so "ordering is broadly preserved" does not show that K2D really beats ReAct or LATS on Open.
-- **Missing dimensions:** only K and R correlations are reported. D/35 and F/25 carry 60% of the rubric weight and are omitted, and in Tables 2–3 only K/20 of the five rubric dimensions appears at all. F/25 (feasibility and constraints) is the natural evidence for the paper's "constraint-sensitive commitment" claim.
-- **J-disagree is not a quality measure:** it is marked "↓ better" and used as mechanism evidence, but it measures evaluator reliability. HippoRAG, the second-worst Open system, has the lowest (bolded) value.
-
-**M7. RQ3 is reported only as a truncated radar plot, and the averages hide heterogeneity.** Figure 4's radial scale starts at 50, and the MiniMax M3 Vanilla Closed point falls below that floor and is clipped. Taking the Flash numbers out of the reported averages, the other three backbones average:
-
-| Contrast | Closed | Open |
-|---|---|---|
-| K2D over ReAct | +6.25 (≈3 tasks per backbone) | +0.22 |
-| K2D over Vanilla | +13.89 | +2.64 |
-
-- **Flash's ReAct looks anomalous.** ReAct − Vanilla on Closed is −12.5 on Flash but about +7.6 on the other backbones. That anomalous run supplies RQ1's headline "14.58 Closed points over ReAct".
-- **Zero HCV is not specific to K2D here.** In the GPT-5.5 panel, all three systems sit at Safety = 100.
-- **The strongest evidence is untested.** The pooled evidence, 192 paired Closed tasks with net +16 tasks over ReAct and +21 over Vanilla, may be the paper's most defensible result, but it is never tested (e.g. with a CMH or mixed-effects logistic model with task and backbone effects).
-- **Missing results:** the paper needs a per-backbone table. The partial Qwen3.6 and DiffusionGemma runs are mentioned twice but never reported.
-
-**M8. The mechanism narrative leans on one trace, and that trace suggests the relations are written at the end.** "Figure 5 illustrates that relational integration matters more than graph size" is concluded from one task across three different LLMs, so graph structure is confounded with the backbone.
-
-- **When edges appear:** in both DeepSeek traces, every edge appears in the final revision (Flash: revision 2 has 19 nodes / 0 edges, revision 3 has 19 / 18; Pro: revision 3 has 16 nodes / 0 edges, revision 4 has 16 / 27). The relations linking evidence to candidates are therefore written in one batch at commitment time, not incrementally while guiding inquiry. That is closer to the "post-hoc explanation" the paper says the DSG is not.
-- **Missing statistics:** the paper gives no population-level DSG statistics, such as revisions per episode, edges added before versus after the last acquisition, the fraction of inquiry nodes that led to tool calls, or unresolved dependencies at commit time.
-- **Faithfulness untested:** there is no test of whether the graph actually drives the decision, e.g. by perturbing a decisive Knowledge node.
-
-**M9. The AISI social-impact case (see also Strengths and Weaknesses).**
-
-- **No concrete problem:** the paper does not define a concrete social-impact problem, decision-maker, affected population or baseline harm. It is a general agent architecture evaluated on public-sector-flavoured tasks, and the only concrete tasks shown are flood-resilience planning.
-- **Recommend or decide?** The Introduction motivates the work with agents that "determine eligibility, prioritize an intervention", but the paper never says whether K2D is meant to recommend or to decide.
-- **Auditability untested:** the most plausible social-impact route is the DSG as an auditable, contestable decision record for human officials, but it is not evaluated with any human user.
-- **No ethics statement, short Limitations:** there is no ethics or broader-impact statement, and the Limitations section is two sentences long.
-- **Misleading "Safety" label:** relabelling 100 − HCV as "Safety" invites a reading about safety for affected people that the metric does not support.
-- **No equity dimension:** the Open rubric has no equity or affected-party dimension, even though the families include housing services.
-
-### Literature (details for the "Engagement" rating)
-
-There is no related-work section; prior work is compressed into one Introduction paragraph. All 18 references are CS/NLP papers or product pages. The abstract claims that "existing decision-oriented LLM agents typically place retrieved material in context", yet no decision-oriented LLM agent is cited, and the AI4SS framing has no citation. The closest competitors are missing:
-
-- **LLM methods that already make decision structure explicit:**
-  - DeLLMa (Liu et al., ICLR 2025)
-  - DecisionFlow (Chen et al., Findings of EMNLP 2025)
-  - STRUX (Lu et al., NAACL 2025)
-  - Argumentative LLMs (Freedman et al., AAAI 2025)
-  - LLM-constructed influence diagrams (e.g. LAMDA, *Decision Analysis*, 2025)
-
-  At least one of these should be a baseline.
-- **Structured and agent-authored memory:** CoALA (Sumers et al., TMLR 2024), MemGPT (Packer et al., 2023), A-Mem (Xu et al., NeurIPS 2025), Graph of Thoughts (Besta et al., AAAI 2024), Think-on-Graph (Sun et al., ICLR 2024).
-- **Self-verification, relevant to the review step:** Self-Refine, CRITIC, Chain-of-Verification.
-- **Related gap framings:** the LLM "knowing-doing gap" (Schmied et al., ICLR 2026); the knowledge-conflict survey (Xu et al., EMNLP 2024).
-- **Benchmark positioning:** τ-bench (Yao et al., ICLR 2025); requirements for public-sector agent benchmarks (Rystrøm et al., IASEAI 2026).
-- **Outside CS, which the DSG closely echoes:**
-  - decision analysis: PrOACT (Hammond, Keeney & Raiffa 1999), influence diagrams (Howard & Matheson 1984), value of information (Howard 1966). The inquiry-creation rule is essentially an informal value-of-information criterion.
-  - argumentation and design rationale: Toulmin (1958), Dung (1995), bipolar argumentation (Cayrol & Lagasquie-Schiex 2005), IBIS (Kunz & Rittel 1970).
-  - structured analytic techniques: Analysis of Competing Hypotheses (Heuer 1999), and evidence that ACH can increase inconsistency (Dhami et al. 2019).
-  - automation bias and public-sector algorithmic advice: Skitka et al. (1999); Alon-Barkat & Busuioc (2023, JPART).
-  - the implementation-science "knowledge-to-action gap" (Graham et al. 2006).
-
-With these in view, the novelty is narrower than claimed, though it is real: incremental, tool-driven, agent-authored decision state interleaved with acquisition, plus read-back after each edit.
-
-### Minor issues and presentation
-
-- **Figure 2:** it contains the typo "Hidden Constrainies". The Reflective Deliberation row repeats the Decision Workflow sub-captions word for word, so Propose / Review DSG / Revise-or-Commit are never actually described. The "Constrain" edge label is not among the edge types listed in the text.
-- **Figure 5:** node labels are truncated and overlapping, edge types have no legend, and an internal task ID ("TASK-5F32A2F71D269400") and "1 nodes" appear in the figure. For GPT-5.5, "Initial" and "Middle" are the same revision-1 snapshot.
-- **Figure 4:** the radial axis starts at 50 and clips data, and the normalisation of D and K is not stated. A table would be clearer.
-- **Naming:** E1/E2/E3 appear in captions and RQ1–RQ3 in the text. "Categories are separated by rules" (Table 2 caption) is unclear.
-- **Unused metrics:** Table 1 defines D, F, R, A and a family macro that are never reported. With six worlds per family, the family macro equals the plain mean, so a per-family breakdown would be more informative.
-- **Formalism:** $\mathcal{P}=(q,\mathcal{A},\mathcal{O},\mathcal{C},x_0,\mathcal{E})$, $\pi_\theta$, $\Phi$ and $\Psi$ are introduced but not used operationally. $\Phi$ is never defined and $R_t$ is never used again. Concrete specifications of the edit API, the projection returned after each edit, the skill text and the review prompt would be far more useful.
-- **Undefined jargon:** "protected Open authority", "source–receipt binding", "created in an unpassed state", "hash-bound at one cutoff", "benchmark-field extraction", "final feedback edge".
-- **"Holding information constant":** Closed tasks expose candidates and rules that Open tasks never see, so information is not held constant; only the world and sources are. The Closed/Open pairing is also never analysed as a pairing.
-- **Industrial systems** are cited by product page without the version evaluated.
-
-### What would change my assessment
-
-In rough order of importance:
-
-1. Test-family-only results.
-2. At least three seeds per configuration, with CIs and paired tests.
-3. A graph-free control that keeps the same loop (a persistent notes file returned after each edit), plus a definition of "No post-edit".
-4. An operational definition and per-system reporting of decisive-evidence acquisition, plus some tasks where acquisition is actually hard.
-5. A per-backbone RQ3 table with a pooled, stratified test.
-6. Compute and cost reporting, and the backbone and configuration used for Claude Code and Codex.
-7. Named judges, all five rubric dimensions, and a larger, system-level human audit.
-8. A release commitment.
-9. A related-work section, an ethics statement, and a clearer account of intended human use.
+**What would change my assessment:**
+- results on the test families only;
+- at least three seeds, with CIs and paired tests;
+- a notes-file control that keeps the same loop;
+- a defined, per-system acquisition metric;
+- a per-backbone RQ3 table;
+- cost reporting and the backbone used for Claude Code and Codex;
+- named judges, all five rubric dimensions, and a larger audit;
+- a release commitment;
+- a related-work section and an ethics statement.
 
 ---
 
@@ -228,7 +139,7 @@ In rough order of importance:
 
 **4) Soundness — 2 (Fair).**
 - *Strength:* deterministic Closed scoring, frozen and hashed sources with replay, and matched ablations, backbones and baselines, all under one shared tool interface.
-- *Weakness:* single runs with no uncertainty; margins of 0–4 of 48 tasks. Development families are included in the reported results. The acquisition diagnostic is undefined and at 100% for everyone, so the pre-acquisition claim is untested. One RQ2 sentence is contradicted by Table 3. Compute is unbudgeted and unreported, and baseline adaptation and the industrial systems' backbones are unspecified. The judge panel is unnamed, with a small, mislabelled human audit. RQ3 appears only as a clipped radar plot. See M1–M8.
+- *Weakness:* single runs with no uncertainty; margins of 0–4 of 48 tasks. Development families are included in the reported results. The acquisition diagnostic is undefined and at 100% for everyone, so the pre-acquisition claim is untested. One RQ2 sentence is contradicted by Table 3. Compute is unbudgeted and unreported, and baseline adaptation and the industrial systems' backbones are unspecified. The judge panel is unnamed, with a small, mislabelled human audit. RQ3 appears only as a clipped radar plot. Details are in the Quality section of the Review.
 
 **5) Facilitation of follow-up work — 1 (Poor), as submitted.**
 - *Strength:* the benchmark is engineered for reproducibility (hashes, terms, deterministic tool replay, leakage checks).
